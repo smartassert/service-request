@@ -31,6 +31,8 @@ interface FieldInterface
 
     public function getRequirements(): ?RequirementsInterface;
 
+    public function withRequirements(RequirementsInterface $requirements): FieldInterface;
+
     public function getErrorPosition(): ?int;
 
     public function withErrorPosition(int $position): FieldInterface;
