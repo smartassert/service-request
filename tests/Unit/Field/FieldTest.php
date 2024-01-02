@@ -61,7 +61,7 @@ class FieldTest extends TestCase
                 ],
             ],
             'custom field, has requirements, no size' => [
-                'field' => new Field($name, $randomString, new Requirements('custom_type')),
+                'field' => (new Field($name, $randomString))->withRequirements(new Requirements('custom_type')),
                 'expected' => [
                     'name' => $name,
                     'value' => $randomString,
@@ -71,14 +71,10 @@ class FieldTest extends TestCase
                 ],
             ],
             'custom field, has requirements, has size (0), no maximum' => [
-                'field' => new Field(
-                    $name,
-                    $randomString,
-                    new Requirements(
-                        'custom_type',
-                        new Size(0, null)
-                    ),
-                ),
+                'field' => (new Field($name, $randomString))->withRequirements(new Requirements(
+                    'custom_type',
+                    new Size(0, null)
+                )),
                 'expected' => [
                     'name' => $name,
                     'value' => $randomString,
@@ -92,14 +88,10 @@ class FieldTest extends TestCase
                 ],
             ],
             'custom field, has requirements, has size (10), no maximum' => [
-                'field' => new Field(
-                    $name,
-                    $randomString,
-                    new Requirements(
-                        'custom_type',
-                        new Size(10, null)
-                    ),
-                ),
+                'field' => (new Field($name, $randomString))->withRequirements(new Requirements(
+                    'custom_type',
+                    new Size(10, null)
+                )),
                 'expected' => [
                     'name' => $name,
                     'value' => $randomString,
@@ -113,14 +105,10 @@ class FieldTest extends TestCase
                 ],
             ],
             'custom field, has requirements, has size' => [
-                'field' => new Field(
-                    $name,
-                    $randomString,
-                    new Requirements(
-                        'custom_type',
-                        new Size(1, 255)
-                    ),
-                ),
+                'field' => (new Field($name, $randomString))->withRequirements(new Requirements(
+                    'custom_type',
+                    new Size(1, 255)
+                )),
                 'expected' => [
                     'name' => $name,
                     'value' => $randomString,
@@ -134,12 +122,7 @@ class FieldTest extends TestCase
                 ],
             ],
             'string array field' => [
-                'field' => new Field(
-                    $name,
-                    ['one', 'two', 'three'],
-                    null,
-                    1
-                ),
+                'field' => (new Field($name, ['one', 'two', 'three']))->withErrorPosition(1),
                 'expected' => [
                     'name' => $name,
                     'value' => ['one', 'two', 'three'],

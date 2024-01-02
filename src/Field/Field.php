@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Field;
 
-readonly class Field implements FieldInterface
+class Field implements FieldInterface
 {
+    private ?int $errorPosition = null;
+    private ?RequirementsInterface $requirements = null;
+
     /**
      * @param non-empty-string     $name
      * @param array<scalar>|scalar $value
      */
     public function __construct(
-        private string $name,
-        private array|bool|float|int|string $value,
-        private ?RequirementsInterface $requirements = null,
-        private ?int $errorPosition = null,
+        private readonly string $name,
+        private readonly array|bool|float|int|string $value,
     ) {
     }
 
@@ -33,6 +34,14 @@ readonly class Field implements FieldInterface
         return $this->requirements;
     }
 
+    public function withRequirements(RequirementsInterface $requirements): FieldInterface
+    {
+        $new = clone $this;
+        $new->requirements = $requirements;
+
+        return $new;
+    }
+
     public function getErrorPosition(): ?int
     {
         return $this->errorPosition;
@@ -40,7 +49,10 @@ readonly class Field implements FieldInterface
 
     public function withErrorPosition(int $position): FieldInterface
     {
-        return new Field($this->name, $this->value, $this->requirements, $position);
+        $new = clone $this;
+        $new->errorPosition = $position;
+
+        return $new;
     }
 
     public function jsonSerialize(): array
