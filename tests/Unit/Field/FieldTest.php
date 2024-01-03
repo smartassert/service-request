@@ -13,19 +13,37 @@ use SmartAssert\ServiceRequest\Field\Size;
 class FieldTest extends TestCase
 {
     /**
-     * @dataProvider jsonSerializeDataProvider
+     * @dataProvider serializeDataProvider
      *
-     * @param array<mixed> $expected
+     * @param array<mixed> $serialized
      */
-    public function testJsonSerialize(FieldInterface $field, array $expected): void
+    public function testSerialize(FieldInterface $field, array $serialized): void
     {
-        self::assertSame($expected, $field->serialize());
+        self::assertSame($serialized, $field->serialize());
+    }
+
+    /**
+     * @dataProvider serializeDataProvider
+     *
+     * @param array<mixed> $serialized
+     */
+    public function testDeserialize(FieldInterface $field, array $serialized): void
+    {
+        self::assertEquals(Field::deserialize($serialized), $field);
+    }
+
+    /**
+     * @dataProvider serializeDataProvider
+     */
+    public function testSerializeDeserialize(FieldInterface $field): void
+    {
+        self::assertEquals($field, Field::deserialize($field->serialize()));
     }
 
     /**
      * @return array<mixed>
      */
-    public static function jsonSerializeDataProvider(): array
+    public static function serializeDataProvider(): array
     {
         $name = md5((string) rand());
         $randomInteger = rand();
@@ -34,35 +52,35 @@ class FieldTest extends TestCase
         return [
             'bool field, no requirements, ' => [
                 'field' => new Field($name, true),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => true,
                 ],
             ],
             'float field, no requirements, ' => [
                 'field' => new Field($name, M_PI),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => M_PI,
                 ],
             ],
             'int field, no requirements, ' => [
                 'field' => new Field($name, $randomInteger),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => $randomInteger,
                 ],
             ],
             'string field, no requirements, ' => [
                 'field' => new Field($name, $randomString),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
                 ],
             ],
             'custom field, has requirements, no size' => [
                 'field' => (new Field($name, $randomString))->withRequirements(new Requirements('custom_type')),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
                     'requirements' => [
@@ -75,7 +93,7 @@ class FieldTest extends TestCase
                     'custom_type',
                     new Size(0, null)
                 )),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
                     'requirements' => [
@@ -92,7 +110,7 @@ class FieldTest extends TestCase
                     'custom_type',
                     new Size(10, null)
                 )),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
                     'requirements' => [
@@ -109,7 +127,7 @@ class FieldTest extends TestCase
                     'custom_type',
                     new Size(1, 255)
                 )),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
                     'requirements' => [
@@ -123,7 +141,7 @@ class FieldTest extends TestCase
             ],
             'string array field' => [
                 'field' => (new Field($name, ['one', 'two', 'three']))->withErrorPosition(1),
-                'expected' => [
+                'serialized' => [
                     'name' => $name,
                     'value' => ['one', 'two', 'three'],
                     'position' => 1,
