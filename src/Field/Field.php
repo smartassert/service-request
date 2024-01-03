@@ -55,7 +55,7 @@ class Field implements FieldInterface
         return $new;
     }
 
-    public function jsonSerialize(): array
+    public function serialize(): array
     {
         $data = [
             'name' => $this->getName(),

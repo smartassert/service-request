@@ -19,7 +19,7 @@ class FieldTest extends TestCase
      */
     public function testJsonSerialize(FieldInterface $field, array $expected): void
     {
-        self::assertSame($expected, $field->jsonSerialize());
+        self::assertSame($expected, $field->serialize());
     }
 
     /**
