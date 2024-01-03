@@ -11,6 +11,8 @@ class InvalidFieldDataException extends \Exception
     public const CODE_DATA_TYPE_EMPTY = 3;
     public const CODE_SIZE_MINIMUM_NOT_AN_INTEGER = 4;
 
+    public const CODE_VALUE_MISSING = 5;
+
     /**
      * @param array<mixed> $data
      * @param self::CODE_* $code

@@ -98,11 +98,19 @@ class Field implements FieldInterface
         }
 
         $value = $data['value'] ?? null;
+        if (null === $value) {
+            throw new InvalidFieldDataException($data, InvalidFieldDataException::CODE_VALUE_MISSING);
+        }
+
         if (is_array($value)) {
             foreach ($value as $item) {
-                if (!is_bool($item) && !is_float($item) && !is_int($item) && !is_string($item)) {
+                if (!is_scalar($item)) {
                     throw new InvalidFieldDataException($data, InvalidFieldDataException::CODE_VALUE_NOT_SCALAR);
                 }
+            }
+        } else {
+            if (!is_scalar($value)) {
+                throw new InvalidFieldDataException($data, InvalidFieldDataException::CODE_VALUE_NOT_SCALAR);
             }
         }
 
