@@ -40,5 +40,5 @@ interface FieldInterface
     /**
      * @return SerializedField
      */
-    public function jsonSerialize(): array;
+    public function serialize(): array;
 }
