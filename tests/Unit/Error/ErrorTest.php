@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Tests\Unit\Error;
 
 use PHPUnit\Framework\TestCase;
-use SmartAssert\ServiceRequest\Error\ErrorException;
+use SmartAssert\ServiceRequest\Error\Error;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 
 class ErrorTest extends TestCase
@@ -30,13 +30,13 @@ class ErrorTest extends TestCase
 
         return [
             'class only' => [
-                'error' => new ErrorException($class, null, '', rand()),
+                'error' => new Error($class, null),
                 'serialized' => [
                     'class' => $class,
                 ],
             ],
             'class and type' => [
-                'error' => new ErrorException($class, $type, '', rand()),
+                'error' => new Error($class, $type),
                 'serialized' => [
                     'class' => $class,
                     'type' => $type,
