@@ -6,7 +6,10 @@ namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Field;
 
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer;
-use SmartAssert\ServiceRequest\Exception\InvalidFieldDataException;
+use SmartAssert\ServiceRequest\Exception\FieldValueEmptyException;
+use SmartAssert\ServiceRequest\Exception\FieldValueInvalidException;
+use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
+use SmartAssert\ServiceRequest\Exception\FieldValueTypeErrorException;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
 use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
 
@@ -38,12 +41,16 @@ class DeserializerTest extends TestCase
      *
      * @param array<mixed> $data
      */
-    public function testDeserializeThrowsException(array $data, int $expectedExceptionCode): void
+    public function testDeserializeThrowsException(array $data, \Throwable $expected): void
     {
-        self::expectException(InvalidFieldDataException::class);
-        self::expectExceptionCode($expectedExceptionCode);
+        $exception = null;
 
-        $this->deserializer->deserialize($data);
+        try {
+            $this->deserializer->deserialize($data);
+        } catch (\Throwable $exception) {
+        }
+
+        self::assertEquals($expected, $exception);
     }
 
     /**
@@ -51,64 +58,123 @@ class DeserializerTest extends TestCase
      */
     public static function deserializeThrowsExceptionDataProvider(): array
     {
+        $name = md5((string) rand());
+
         return [
             'name missing' => [
                 'data' => [],
-                'expectedExceptionCode' => InvalidFieldDataException::CODE_NAME_MISSING,
+                'expected' => new FieldValueMissingException('name', []),
+            ],
+            'name empty' => [
+                'data' => ['name' => ''],
+                'expected' => new FieldValueEmptyException('name', ['name' => '']),
+            ],
+            'name incorrect type' => [
+                'data' => ['name' => true],
+                'expected' => new FieldValueTypeErrorException(
+                    'name',
+                    'string',
+                    'boolean',
+                    ['name' => true],
+                ),
             ],
             'value missing' => [
-                'data' => [
-                    'name' => 'field_name',
-                ],
-                'expectedExceptionCode' => InvalidFieldDataException::CODE_VALUE_MISSING,
+                'data' => ['name' => $name],
+                'expected' => new FieldValueMissingException('value', ['name' => $name]),
             ],
-            'value invalid type' => [
-                'data' => [
-                    'name' => 'field_name',
-                    'value' => new \stdClass(),
-                ],
-                'expectedExceptionCode' => InvalidFieldDataException::CODE_VALUE_NOT_SCALAR,
+            'value empty' => [
+                'data' => ['name' => $name, 'value' => null],
+                'expected' => new FieldValueEmptyException('value', ['name' => $name, 'value' => '']),
             ],
-            'value in array invalid type' => [
-                'data' => [
-                    'name' => 'field_name',
-                    'value' => [
-                        new \stdClass(),
-                    ],
-                ],
-                'expectedExceptionCode' => InvalidFieldDataException::CODE_VALUE_NOT_SCALAR,
+            'value not scalar' => [
+                'data' => ['name' => $name, 'value' => new \stdClass()],
+                'expected' => new FieldValueTypeErrorException(
+                    'value',
+                    'scalar',
+                    'object',
+                    ['name' => $name, 'value' => new \stdClass()],
+                ),
+            ],
+            'value in array not scalar' => [
+                'data' => ['name' => $name, 'value' => [new \stdClass()]],
+                'expected' => new FieldValueTypeErrorException(
+                    'value.0',
+                    'scalar',
+                    'object',
+                    ['name' => $name, 'value' => [new \stdClass()]],
+                ),
             ],
             'requirements data type missing' => [
-                'data' => [
-                    'name' => 'field_name',
-                    'value' => '',
-                    'requirements' => [],
-                ],
-                'expectedExceptionCode' => InvalidFieldDataException::CODE_DATA_TYPE_EMPTY,
+                'data' => ['name' => $name, 'value' => '', 'requirements' => []],
+                'expected' => new FieldValueMissingException(
+                    'requirements.data_type',
+                    ['name' => $name, 'value' => '', 'requirements' => []]
+                ),
             ],
-            'requirements size minimum missing' => [
+            'requirements data type empty' => [
                 'data' => [
-                    'name' => 'field_name',
+                    'name' => $name,
                     'value' => '',
                     'requirements' => [
-                        'data_type' => 'string',
-                        'size' => [],
+                        'data_type' => '',
                     ],
                 ],
-                'expectedExceptionCode' => InvalidFieldDataException::CODE_SIZE_MINIMUM_NOT_AN_INTEGER,
+                'expected' => new FieldValueEmptyException(
+                    'requirements.data_type',
+                    [
+                        'name' => $name,
+                        'value' => '',
+                        'requirements' => [
+                            'data_type' => '',
+                        ],
+                    ],
+                ),
             ],
-            'requirements size is not an integer' => [
+            'requirements data type incorrect type' => [
                 'data' => [
-                    'name' => 'field_name',
+                    'name' => $name,
+                    'value' => '',
+                    'requirements' => [
+                        'data_type' => 123,
+                    ],
+                ],
+                'expected' => new FieldValueTypeErrorException(
+                    'requirements.data_type',
+                    'string',
+                    'integer',
+                    [
+                        'name' => $name,
+                        'value' => '',
+                        'requirements' => [
+                            'data_type' => 123,
+                        ],
+                    ],
+                ),
+            ],
+            'requirements size minimum not an integer' => [
+                'data' => [
+                    'name' => $name,
                     'value' => '',
                     'requirements' => [
                         'data_type' => 'string',
                         'size' => [
-                            'minimum' => true,
+                            'minimum' => 'string value',
                         ],
                     ],
                 ],
-                'expectedExceptionCode' => InvalidFieldDataException::CODE_SIZE_MINIMUM_NOT_AN_INTEGER,
+                'expected' => new FieldValueInvalidException(
+                    'requirements.size.minimum',
+                    [
+                        'name' => $name,
+                        'value' => '',
+                        'requirements' => [
+                            'data_type' => 'string',
+                            'size' => [
+                                'minimum' => 'string value',
+                            ],
+                        ],
+                    ],
+                ),
             ],
         ];
     }
