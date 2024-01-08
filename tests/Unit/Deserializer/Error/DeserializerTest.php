@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Deserializer\Error\BadRequestErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\Deserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\DuplicateObjectErrorDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Error\ErrorFieldDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
@@ -306,11 +307,11 @@ class DeserializerTest extends TestCase
 
     public static function createDeserializer(): Deserializer
     {
-        $fieldDeserializer = new FieldDeserializer();
+        $errorFieldDeserializer = new ErrorFieldDeserializer(new FieldDeserializer());
 
         return new Deserializer([
-            new BadRequestErrorDeserializer($fieldDeserializer),
-            new DuplicateObjectErrorDeserializer($fieldDeserializer),
+            new BadRequestErrorDeserializer($errorFieldDeserializer),
+            new DuplicateObjectErrorDeserializer($errorFieldDeserializer),
         ]);
     }
 }
