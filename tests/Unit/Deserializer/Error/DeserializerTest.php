@@ -9,12 +9,15 @@ use SmartAssert\ServiceRequest\Deserializer\Error\BadRequestErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\Deserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\DuplicateObjectErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ErrorFieldDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 use SmartAssert\ServiceRequest\Error\DuplicateObjectError;
 use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
+use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityError;
+use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
@@ -238,13 +241,161 @@ class DeserializerTest extends TestCase
                     new FieldValueMissingException('name', []),
                 ),
             ],
+            'modify read-only entity error entity missing' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                ],
+                'expected' => new ErrorValueMissingException(
+                    'modify_read_only',
+                    'entity',
+                    [
+                        'class' => 'modify_read_only',
+                    ],
+                ),
+            ],
+            'modify read-only entity entity not an array' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                    'entity' => 123,
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'modify_read_only',
+                    'entity',
+                    'array',
+                    'integer',
+                    [
+                        'class' => 'modify_read_only',
+                        'entity' => 123,
+                    ],
+                ),
+            ],
+            'modify read-only entity entity.id missing' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                    'entity' => [],
+                ],
+                'expected' => new ErrorValueMissingException(
+                    'modify_read_only',
+                    'entity.id',
+                    [
+                        'class' => 'modify_read_only',
+                        'entity' => [],
+                    ],
+                ),
+            ],
+            'modify read-only entity entity.id empty' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                    'entity' => [
+                        'id' => '',
+                    ],
+                ],
+                'expected' => new ErrorValueInvalidException(
+                    'modify_read_only',
+                    'entity.id',
+                    [
+                        'class' => 'modify_read_only',
+                        'entity' => [
+                            'id' => '',
+                        ],
+                    ],
+                ),
+            ],
+            'modify read-only entity entity.id not a string' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                    'entity' => [
+                        'id' => 123,
+                    ],
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'modify_read_only',
+                    'entity.id',
+                    'string',
+                    'integer',
+                    [
+                        'class' => 'modify_read_only',
+                        'entity' => [
+                            'id' => 123,
+                        ],
+                    ]
+                ),
+            ],
+            'modify read-only entity entity.type missing' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                    'entity' => [
+                        'id' => 'entity_id',
+                    ],
+                ],
+                'expected' => new ErrorValueMissingException(
+                    'modify_read_only',
+                    'entity.type',
+                    [
+                        'class' => 'modify_read_only',
+                        'entity' => [
+                            'id' => 'entity_id',
+                        ],
+                    ],
+                ),
+            ],
+            'modify read-only entity entity.type empty' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                    'entity' => [
+                        'id' => 'entity_id',
+                        'type' => '',
+                    ],
+                ],
+                'expected' => new ErrorValueInvalidException(
+                    'modify_read_only',
+                    'entity.type',
+                    [
+                        'class' => 'modify_read_only',
+                        'entity' => [
+                            'id' => 'entity_id',
+                            'type' => '',
+                        ],
+                    ],
+                ),
+            ],
+            'modify read-only entity entity.type not a string' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'modify_read_only',
+                    'entity' => [
+                        'id' => 'entity_id',
+                        'type' => 123,
+                    ],
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'modify_read_only',
+                    'entity.type',
+                    'string',
+                    'integer',
+                    [
+                        'class' => 'modify_read_only',
+                        'entity' => [
+                            'id' => 'entity_id',
+                            'type' => 123,
+                        ],
+                    ]
+                ),
+            ],
         ];
     }
 
     /**
-     * @!dataProvider deserializeBadRequestErrorDataProvider
-     *
+     * @dataProvider deserializeBadRequestErrorDataProvider
      * @dataProvider deserializeDuplicateObjectErrorDataProvider
+     * @dataProvider deserializeModifyReadOnlyErrorDataProvider
      *
      * @param array<mixed> $data
      */
@@ -305,6 +456,28 @@ class DeserializerTest extends TestCase
         return $dataSets;
     }
 
+    /**
+     * @return array<mixed>
+     */
+    public static function deserializeModifyReadOnlyErrorDataProvider(): array
+    {
+        $entityId = md5((string) rand());
+        $entityType = md5((string) rand());
+
+        return [
+            'modify read-only entity error' => [
+                'error' => new ModifyReadOnlyEntityError($entityId, $entityType),
+                'serialized' => [
+                    'class' => ModifyReadOnlyEntityErrorInterface::ERROR_CLASS,
+                    'entity' => [
+                        'id' => $entityId,
+                        'type' => $entityType,
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public static function createDeserializer(): Deserializer
     {
         $errorFieldDeserializer = new ErrorFieldDeserializer(new FieldDeserializer());
@@ -312,6 +485,7 @@ class DeserializerTest extends TestCase
         return new Deserializer([
             new BadRequestErrorDeserializer($errorFieldDeserializer),
             new DuplicateObjectErrorDeserializer($errorFieldDeserializer),
+            new ModifyReadOnlyEntityDeserializer(),
         ]);
     }
 }

@@ -13,7 +13,7 @@ class ErrorValueInvalidException extends \Exception
         public readonly ?string $errorClass,
         public readonly string $name,
         public readonly array $data,
-        public readonly ?\Throwable $previousException
+        public readonly ?\Throwable $previousException = null
     ) {
         parent::__construct('', 0, $previousException);
     }
