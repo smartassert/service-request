@@ -7,9 +7,12 @@ namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Error;
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Deserializer\Error\BadRequestErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\Deserializer;
+use SmartAssert\ServiceRequest\Deserializer\Error\DuplicateObjectErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
+use SmartAssert\ServiceRequest\Error\DuplicateObjectError;
+use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
@@ -188,11 +191,59 @@ class DeserializerTest extends TestCase
                     new FieldValueMissingException('name', []),
                 ),
             ],
+            'duplicate object error field missing' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'duplicate',
+                ],
+                'expected' => new ErrorValueMissingException(
+                    'duplicate',
+                    'field',
+                    [
+                        'class' => 'duplicate',
+                    ],
+                ),
+            ],
+            'duplicate error field not an array' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'duplicate',
+                    'field' => 123,
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'duplicate',
+                    'field',
+                    'array',
+                    'integer',
+                    [
+                        'class' => 'duplicate',
+                        'field' => 123,
+                    ],
+                ),
+            ],
+            'duplicate object error field invalid' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'duplicate',
+                    'field' => [],
+                ],
+                'expected' => new ErrorValueInvalidException(
+                    'duplicate',
+                    'field',
+                    [
+                        'class' => 'duplicate',
+                        'field' => [],
+                    ],
+                    new FieldValueMissingException('name', []),
+                ),
+            ],
         ];
     }
 
     /**
-     * @dataProvider deserializeDataProvider
+     * @!dataProvider deserializeBadRequestErrorDataProvider
+     *
+     * @dataProvider deserializeDuplicateObjectErrorDataProvider
      *
      * @param array<mixed> $data
      */
@@ -204,7 +255,7 @@ class DeserializerTest extends TestCase
     /**
      * @return array<mixed>
      */
-    public static function deserializeDataProvider(): array
+    public static function deserializeBadRequestErrorDataProvider(): array
     {
         $errorType = md5((string) rand());
         $dataSets = [];
@@ -214,7 +265,7 @@ class DeserializerTest extends TestCase
             \assert(array_key_exists('field', $data));
             \assert(array_key_exists('serialized', $data));
 
-            $testName = 'with field: ' . $fieldTestName;
+            $testName = 'bad request error with field: ' . $fieldTestName;
             $dataSets[$testName] = [
                 'error' => new BadRequestError($data['field'], $errorType),
                 'serialized' => [
@@ -228,14 +279,38 @@ class DeserializerTest extends TestCase
         return $dataSets;
     }
 
+    /**
+     * @return array<mixed>
+     */
+    public static function deserializeDuplicateObjectErrorDataProvider(): array
+    {
+        $dataSets = [];
+
+        foreach (self::fieldDataProvider() as $fieldTestName => $data) {
+            \assert(is_array($data));
+            \assert(array_key_exists('field', $data));
+            \assert(array_key_exists('serialized', $data));
+
+            $testName = 'duplicate object error with field: ' . $fieldTestName;
+            $dataSets[$testName] = [
+                'error' => new DuplicateObjectError($data['field']),
+                'serialized' => [
+                    'class' => DuplicateObjectErrorInterface::ERROR_CLASS,
+                    'field' => $data['serialized'],
+                ],
+            ];
+        }
+
+        return $dataSets;
+    }
+
     public static function createDeserializer(): Deserializer
     {
-        $typeDeserializers = [
-            new BadRequestErrorDeserializer(
-                new FieldDeserializer()
-            ),
-        ];
+        $fieldDeserializer = new FieldDeserializer();
 
-        return new Deserializer($typeDeserializers);
+        return new Deserializer([
+            new BadRequestErrorDeserializer($fieldDeserializer),
+            new DuplicateObjectErrorDeserializer($fieldDeserializer),
+        ]);
     }
 }
