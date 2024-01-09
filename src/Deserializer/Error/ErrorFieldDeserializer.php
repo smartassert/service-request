@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
-use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
@@ -20,7 +20,7 @@ readonly class ErrorFieldDeserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws ErrorValueInvalidException
+     * @throws ErrorDeserializationException
      * @throws ErrorValueMissingException
      * @throws ErrorValueTypeErrorException
      */
@@ -38,7 +38,13 @@ readonly class ErrorFieldDeserializer
         try {
             $field = $this->fieldDeserializer->deserialize($fieldData);
         } catch (\Throwable $fieldDeserializeException) {
-            throw new ErrorValueInvalidException($class, 'field', $data, $fieldDeserializeException);
+            throw new ErrorDeserializationException(
+                $class,
+                'field',
+                $data,
+                ErrorDeserializationException::CODE_INVALID,
+                $fieldDeserializeException,
+            );
         }
 
         return $field;

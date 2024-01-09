@@ -6,7 +6,6 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 
@@ -18,7 +17,6 @@ interface TypeDeserializerInterface
      *
      * @throws ErrorValueMissingException
      * @throws ErrorValueTypeErrorException
-     * @throws ErrorValueInvalidException
      * @throws ErrorDeserializationException
      */
     public function deserialize(string $class, array $data): ?ErrorInterface;

@@ -7,7 +7,7 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityError;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 
@@ -39,7 +39,12 @@ readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInter
 
         $entityId = trim($entityId);
         if ('' === $entityId) {
-            throw new ErrorValueInvalidException($class, 'entity.id', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.id',
+                $data,
+                ErrorDeserializationException::CODE_EMPTY,
+            );
         }
 
         if (!array_key_exists('type', $entityData)) {
@@ -53,7 +58,12 @@ readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInter
 
         $entityType = trim($entityType);
         if ('' === $entityType) {
-            throw new ErrorValueInvalidException($class, 'entity.type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.type',
+                $data,
+                ErrorDeserializationException::CODE_EMPTY,
+            );
         }
 
         return new ModifyReadOnlyEntityError($entityId, $entityType);

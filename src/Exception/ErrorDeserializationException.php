@@ -21,8 +21,9 @@ class ErrorDeserializationException extends \Exception
         public readonly string $name,
         public readonly array $data,
         int $code,
+        ?\Throwable $previous = null,
     ) {
-        parent::__construct('', $code);
+        parent::__construct('', $code, $previous);
     }
 
     public function withContext(ErrorContextInterface $context): self
