@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
+use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
@@ -42,21 +43,29 @@ readonly class Deserializer
     public function deserialize(array $data): ErrorInterface
     {
         if (!array_key_exists('class', $data)) {
-            throw new ErrorDeserializationException('', 'class', $data, ErrorDeserializationException::CODE_MISSING);
+            throw new ErrorDeserializationException(
+                '',
+                new DeserializationException('class', $data, DeserializationException::CODE_MISSING)
+            );
         }
 
         $errorClass = $data['class'];
         if (!is_string($errorClass)) {
-            throw (new ErrorDeserializationException(
+            throw new ErrorDeserializationException(
                 '',
-                'class',
-                $data,
-                ErrorDeserializationException::CODE_INVALID
-            ))->withContext(new TypeErrorContext('string', gettype($errorClass)));
+                (new DeserializationException(
+                    'class',
+                    $data,
+                    DeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', gettype($errorClass)))
+            );
         }
 
         if ('' === $errorClass) {
-            throw new ErrorDeserializationException('', 'class', $data, ErrorDeserializationException::CODE_EMPTY);
+            throw new ErrorDeserializationException(
+                '',
+                new DeserializationException('class', $data, DeserializationException::CODE_EMPTY)
+            );
         }
 
         foreach ($this->typeDeserializers as $typeDeserializer) {
