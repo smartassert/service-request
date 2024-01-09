@@ -13,13 +13,14 @@ use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializ
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
-use SmartAssert\ServiceRequest\Exception\UnspecifiedErrorClassException;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\DuplicateObjectErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\ModifyReadOnlyEntityErrorTrait;
@@ -58,19 +59,25 @@ class DeserializerTest extends TestCase
             'error class missing' => [
                 'deserializer' => new Deserializer([]),
                 'data' => [],
-                'expected' => new UnspecifiedErrorClassException([]),
+                'expected' => new ErrorDeserializationException(
+                    '',
+                    'class',
+                    [],
+                    ErrorDeserializationException::CODE_MISSING
+                ),
             ],
             'error class empty' => [
                 'deserializer' => new Deserializer([]),
                 'data' => [
                     'class' => '',
                 ],
-                'expected' => new ErrorValueEmptyException(
-                    null,
+                'expected' => new ErrorDeserializationException(
+                    '',
                     'class',
                     [
                         'class' => '',
-                    ]
+                    ],
+                    ErrorDeserializationException::CODE_EMPTY,
                 ),
             ],
             'error class not a string' => [
@@ -78,14 +85,14 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
-                    null,
+                'expected' => new ErrorDeserializationException(
+                    '',
                     'class',
-                    'string',
-                    'integer',
                     [
                         'class' => 123,
-                    ]
+                    ],
+                    ErrorDeserializationException::CODE_INVALID,
+                    new TypeErrorContext('string', 'integer'),
                 ),
             ],
             'unknown error class' => [
