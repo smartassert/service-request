@@ -10,6 +10,7 @@ use SmartAssert\ServiceRequest\Deserializer\Error\Deserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\DuplicateObjectErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ErrorFieldDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
@@ -25,10 +26,12 @@ use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
 use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
+use SmartAssert\ServiceRequest\Tests\DataProvider\StorageErrorDataProviderTrait;
 
 class DeserializerTest extends TestCase
 {
     use FieldDataProviderTrait;
+    use StorageErrorDataProviderTrait;
 
     /**
      * @dataProvider deserializeThrowsExceptionDataProvider
@@ -389,6 +392,118 @@ class DeserializerTest extends TestCase
                     ]
                 ),
             ],
+            'storage error type is not a string' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'storage',
+                    'type' => 123,
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'storage',
+                    'type',
+                    'string',
+                    'integer',
+                    [
+                        'class' => 'storage',
+                        'type' => 123,
+                    ]
+                ),
+            ],
+            'storage error object type missing' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'storage',
+                    'type' => null,
+                ],
+                'expected' => new ErrorValueMissingException(
+                    'storage',
+                    'object_type',
+                    [
+                        'class' => 'storage',
+                        'type' => null,
+                    ],
+                ),
+            ],
+            'storage error object type empty' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'storage',
+                    'type' => null,
+                    'object_type' => '',
+                ],
+                'expected' => new ErrorValueEmptyException(
+                    'storage',
+                    'object_type',
+                    [
+                        'class' => 'storage',
+                        'type' => null,
+                        'object_type' => '',
+                    ],
+                ),
+            ],
+            'storage error object type not a string' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'storage',
+                    'type' => null,
+                    'object_type' => 123,
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'storage',
+                    'object_type',
+                    'string',
+                    'integer',
+                    [
+                        'class' => 'storage',
+                        'type' => null,
+                        'object_type' => 123,
+                    ],
+                ),
+            ],
+            'storage error location is not a string' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'storage',
+                    'type' => null,
+                    'object_type' => 'file_source',
+                    'location' => 123,
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'storage',
+                    'location',
+                    'string',
+                    'integer',
+                    [
+                        'class' => 'storage',
+                        'type' => null,
+                        'object_type' => 'file_source',
+                        'location' => 123,
+                    ]
+                ),
+            ],
+            'storage error context is not an array' => [
+                'deserializer' => self::createDeserializer(),
+                'data' => [
+                    'class' => 'storage',
+                    'type' => null,
+                    'object_type' => 'file_source',
+                    'location' => null,
+                    'context' => 123,
+                ],
+                'expected' => new ErrorValueTypeErrorException(
+                    'storage',
+                    'context',
+                    'array',
+                    'integer',
+                    [
+                        'class' => 'storage',
+                        'type' => null,
+                        'object_type' => 'file_source',
+                        'location' => null,
+                        'context' => 123,
+                    ]
+                ),
+            ],
         ];
     }
 
@@ -396,6 +511,7 @@ class DeserializerTest extends TestCase
      * @dataProvider deserializeBadRequestErrorDataProvider
      * @dataProvider deserializeDuplicateObjectErrorDataProvider
      * @dataProvider deserializeModifyReadOnlyErrorDataProvider
+     * @dataProvider storageErrorDataProvider
      *
      * @param array<mixed> $data
      */
@@ -478,6 +594,28 @@ class DeserializerTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
+    public static function deserializeStorageErrorDataProvider(): array
+    {
+        $entityId = md5((string) rand());
+        $entityType = md5((string) rand());
+
+        return [
+            'foo' => [
+                'error' => new ModifyReadOnlyEntityError($entityId, $entityType),
+                'serialized' => [
+                    'class' => ModifyReadOnlyEntityErrorInterface::ERROR_CLASS,
+                    'entity' => [
+                        'id' => $entityId,
+                        'type' => $entityType,
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public static function createDeserializer(): Deserializer
     {
         $errorFieldDeserializer = new ErrorFieldDeserializer(new FieldDeserializer());
@@ -486,6 +624,7 @@ class DeserializerTest extends TestCase
             new BadRequestErrorDeserializer($errorFieldDeserializer),
             new DuplicateObjectErrorDeserializer($errorFieldDeserializer),
             new ModifyReadOnlyEntityDeserializer(),
+            new StorageErrorDeserializer(),
         ]);
     }
 }
