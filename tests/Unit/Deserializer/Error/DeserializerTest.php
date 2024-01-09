@@ -13,8 +13,6 @@ use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializ
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
-use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityError;
-use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
@@ -23,12 +21,14 @@ use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\DuplicateObjectErrorDataProvider;
+use SmartAssert\ServiceRequest\Tests\DataProvider\ModifyReadOnlyEntityErrorTrait;
 use SmartAssert\ServiceRequest\Tests\DataProvider\StorageErrorDataProviderTrait;
 
 class DeserializerTest extends TestCase
 {
     use BadRequestErrorDataProvider;
     use DuplicateObjectErrorDataProvider;
+    use ModifyReadOnlyEntityErrorTrait;
     use StorageErrorDataProviderTrait;
 
     /**
@@ -508,7 +508,7 @@ class DeserializerTest extends TestCase
     /**
      * @dataProvider badRequestErrorDataProvider
      * @dataProvider duplicateObjectErrorDataProvider
-     * @dataProvider deserializeModifyReadOnlyErrorDataProvider
+     * @dataProvider modifyReadOnlyEntityDataProvider
      * @dataProvider storageErrorDataProvider
      *
      * @param array<mixed> $data
@@ -516,28 +516,6 @@ class DeserializerTest extends TestCase
     public function testDeserializeSuccess(ErrorInterface $expected, array $data): void
     {
         self::assertEquals($expected, $this->createDeserializer()->deserialize($data));
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public static function deserializeModifyReadOnlyErrorDataProvider(): array
-    {
-        $entityId = md5((string) rand());
-        $entityType = md5((string) rand());
-
-        return [
-            'modify read-only entity error' => [
-                'error' => new ModifyReadOnlyEntityError($entityId, $entityType),
-                'serialized' => [
-                    'class' => ModifyReadOnlyEntityErrorInterface::ERROR_CLASS,
-                    'entity' => [
-                        'id' => $entityId,
-                        'type' => $entityType,
-                    ],
-                ],
-            ],
-        ];
     }
 
     public static function createDeserializer(): Deserializer
