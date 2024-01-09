@@ -7,7 +7,7 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 
@@ -35,7 +35,7 @@ readonly class BadRequestErrorDeserializer implements TypeDeserializerInterface
 
         $type = trim($type);
         if ('' === $type) {
-            throw new ErrorValueEmptyException($class, 'type', $data);
+            throw new ErrorDeserializationException($class, 'type', $data, ErrorDeserializationException::CODE_EMPTY);
         }
 
         return new BadRequestError(

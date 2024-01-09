@@ -14,7 +14,6 @@ use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
@@ -126,13 +125,14 @@ class DeserializerTest extends TestCase
                     'class' => 'bad_request',
                     'type' => '',
                 ],
-                'expected' => new ErrorValueEmptyException(
+                'expected' => new ErrorDeserializationException(
                     'bad_request',
                     'type',
                     [
                         'class' => 'bad_request',
                         'type' => '',
                     ],
+                    ErrorDeserializationException::CODE_EMPTY
                 ),
             ],
             'bad request error type not a string' => [
@@ -437,7 +437,7 @@ class DeserializerTest extends TestCase
                     'type' => null,
                     'object_type' => '',
                 ],
-                'expected' => new ErrorValueEmptyException(
+                'expected' => new ErrorDeserializationException(
                     'storage',
                     'object_type',
                     [
@@ -445,6 +445,7 @@ class DeserializerTest extends TestCase
                         'type' => null,
                         'object_type' => '',
                     ],
+                    ErrorDeserializationException::CODE_EMPTY,
                 ),
             ],
             'storage error object type not a string' => [

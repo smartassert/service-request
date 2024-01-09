@@ -7,7 +7,7 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\StorageError;
 use SmartAssert\ServiceRequest\Error\StorageErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 
@@ -43,7 +43,12 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
 
         $objectType = trim($objectType);
         if ('' === $objectType) {
-            throw new ErrorValueEmptyException($class, 'object_type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'object_type',
+                $data,
+                ErrorDeserializationException::CODE_EMPTY
+            );
         }
 
         $location = null;

@@ -6,7 +6,6 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
@@ -40,7 +39,6 @@ readonly class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws ErrorValueEmptyException
      * @throws ErrorValueInvalidException
      * @throws ErrorValueMissingException
      * @throws ErrorValueTypeErrorException
