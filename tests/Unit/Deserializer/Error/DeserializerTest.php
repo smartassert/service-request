@@ -12,8 +12,6 @@ use SmartAssert\ServiceRequest\Deserializer\Error\ErrorFieldDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
-use SmartAssert\ServiceRequest\Error\BadRequestError;
-use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 use SmartAssert\ServiceRequest\Error\DuplicateObjectError;
 use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
@@ -25,12 +23,14 @@ use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
+use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
 use SmartAssert\ServiceRequest\Tests\DataProvider\StorageErrorDataProviderTrait;
 
 class DeserializerTest extends TestCase
 {
     use FieldDataProviderTrait;
+    use BadRequestErrorDataProvider;
     use StorageErrorDataProviderTrait;
 
     /**
@@ -508,7 +508,7 @@ class DeserializerTest extends TestCase
     }
 
     /**
-     * @dataProvider deserializeBadRequestErrorDataProvider
+     * @dataProvider badRequestErrorDataProvider
      * @dataProvider deserializeDuplicateObjectErrorDataProvider
      * @dataProvider deserializeModifyReadOnlyErrorDataProvider
      * @dataProvider storageErrorDataProvider
@@ -518,33 +518,6 @@ class DeserializerTest extends TestCase
     public function testDeserializeSuccess(ErrorInterface $expected, array $data): void
     {
         self::assertEquals($expected, $this->createDeserializer()->deserialize($data));
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public static function deserializeBadRequestErrorDataProvider(): array
-    {
-        $errorType = md5((string) rand());
-        $dataSets = [];
-
-        foreach (self::fieldDataProvider() as $fieldTestName => $data) {
-            \assert(is_array($data));
-            \assert(array_key_exists('field', $data));
-            \assert(array_key_exists('serialized', $data));
-
-            $testName = 'bad request error with field: ' . $fieldTestName;
-            $dataSets[$testName] = [
-                'error' => new BadRequestError($data['field'], $errorType),
-                'serialized' => [
-                    'class' => BadRequestErrorInterface::ERROR_CLASS,
-                    'type' => $errorType,
-                    'field' => $data['serialized'],
-                ],
-            ];
-        }
-
-        return $dataSets;
     }
 
     /**
