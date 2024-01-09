@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Deserializer\Field;
 
-use SmartAssert\ServiceRequest\Exception\FieldValueEmptyException;
-use SmartAssert\ServiceRequest\Exception\FieldValueInvalidException;
-use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
-use SmartAssert\ServiceRequest\Exception\FieldValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\FieldDeserializationException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Field\Field;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
 use SmartAssert\ServiceRequest\Field\Requirements;
@@ -20,10 +18,7 @@ class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws FieldValueEmptyException
-     * @throws FieldValueInvalidException
-     * @throws FieldValueMissingException
-     * @throws FieldValueTypeErrorException
+     * @throws FieldDeserializationException
      */
     public function deserialize(array $data): FieldInterface
     {
@@ -47,24 +42,26 @@ class Deserializer
      *
      * @return non-empty-string
      *
-     * @throws FieldValueEmptyException
-     * @throws FieldValueMissingException
-     * @throws FieldValueTypeErrorException
+     * @throws FieldDeserializationException
      */
     private function findName(array $data): string
     {
         if (!array_key_exists('name', $data)) {
-            throw new FieldValueMissingException('name', $data);
+            throw new FieldDeserializationException('name', $data, FieldDeserializationException::CODE_MISSING);
         }
 
         $name = $data['name'];
         if (!is_string($name)) {
-            throw new FieldValueTypeErrorException('name', 'string', gettype($name), $data);
+            throw (new FieldDeserializationException(
+                'name',
+                $data,
+                FieldDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($name)));
         }
 
         $name = trim($name);
         if ('' === $name) {
-            throw new FieldValueEmptyException('name', $data);
+            throw new FieldDeserializationException('name', $data, FieldDeserializationException::CODE_EMPTY);
         }
 
         return $name;
@@ -75,30 +72,36 @@ class Deserializer
      *
      * @return array<scalar>|scalar
      *
-     * @throws FieldValueEmptyException
-     * @throws FieldValueMissingException
-     * @throws FieldValueTypeErrorException
+     * @throws FieldDeserializationException
      */
     private function findValue(array $data): array|bool|float|int|string
     {
         if (!array_key_exists('value', $data)) {
-            throw new FieldValueMissingException('value', $data);
+            throw new FieldDeserializationException('value', $data, FieldDeserializationException::CODE_MISSING);
         }
 
         $value = $data['value'];
         if (null === $value) {
-            throw new FieldValueEmptyException('value', $data);
+            throw new FieldDeserializationException('value', $data, FieldDeserializationException::CODE_EMPTY);
         }
 
         if (is_array($value)) {
             foreach ($value as $itemKey => $item) {
                 if (!is_scalar($item)) {
-                    throw new FieldValueTypeErrorException('value.' . $itemKey, 'scalar', gettype($item), $data);
+                    throw (new FieldDeserializationException(
+                        'value.' . $itemKey,
+                        $data,
+                        FieldDeserializationException::CODE_INVALID
+                    ))->withContext(new TypeErrorContext('scalar', gettype($item)));
                 }
             }
         } else {
             if (!is_scalar($value)) {
-                throw new FieldValueTypeErrorException('value', 'scalar', gettype($value), $data);
+                throw (new FieldDeserializationException(
+                    'value',
+                    $data,
+                    FieldDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('scalar', gettype($value)));
             }
         }
 
@@ -108,10 +111,7 @@ class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws FieldValueEmptyException
-     * @throws FieldValueInvalidException
-     * @throws FieldValueMissingException
-     * @throws FieldValueTypeErrorException
+     * @throws FieldDeserializationException
      */
     private function createRequirements(array $data): ?RequirementsInterface
     {
@@ -122,17 +122,29 @@ class Deserializer
         $requirementsData = $data['requirements'];
 
         if (!array_key_exists('data_type', $requirementsData)) {
-            throw new FieldValueMissingException('requirements.data_type', $data);
+            throw new FieldDeserializationException(
+                'requirements.data_type',
+                $data,
+                FieldDeserializationException::CODE_MISSING
+            );
         }
 
         $dataType = $requirementsData['data_type'];
         if (!is_string($dataType)) {
-            throw new FieldValueTypeErrorException('requirements.data_type', 'string', gettype($dataType), $data);
+            throw (new FieldDeserializationException(
+                'requirements.data_type',
+                $data,
+                FieldDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($dataType)));
         }
 
         $dataType = trim($dataType);
         if ('' === $dataType) {
-            throw new FieldValueEmptyException('requirements.data_type', $data);
+            throw new FieldDeserializationException(
+                'requirements.data_type',
+                $data,
+                FieldDeserializationException::CODE_EMPTY
+            );
         }
 
         return new Requirements($dataType, $this->createRequirementsSize($data));
@@ -141,7 +153,7 @@ class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws FieldValueInvalidException
+     * @throws FieldDeserializationException
      */
     private function createRequirementsSize(array $data): ?SizeInterface
     {
@@ -154,7 +166,11 @@ class Deserializer
             $minimum = $sizeData['minimum'] ?? null;
             $minimum = is_int($minimum) ? $minimum : null;
             if (null === $minimum) {
-                throw new FieldValueInvalidException('requirements.size.minimum', $data);
+                throw new FieldDeserializationException(
+                    'requirements.size.minimum',
+                    $data,
+                    FieldDeserializationException::CODE_INVALID
+                );
             }
 
             $maximum = $sizeData['maximum'] ?? null;

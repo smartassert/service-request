@@ -6,10 +6,8 @@ namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Field;
 
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer;
-use SmartAssert\ServiceRequest\Exception\FieldValueEmptyException;
-use SmartAssert\ServiceRequest\Exception\FieldValueInvalidException;
-use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
-use SmartAssert\ServiceRequest\Exception\FieldValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\FieldDeserializationException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
 use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
 
@@ -63,52 +61,66 @@ class DeserializerTest extends TestCase
         return [
             'name missing' => [
                 'data' => [],
-                'expected' => new FieldValueMissingException('name', []),
+                'expected' => new FieldDeserializationException(
+                    'name',
+                    [],
+                    FieldDeserializationException::CODE_MISSING
+                ),
             ],
             'name empty' => [
                 'data' => ['name' => ''],
-                'expected' => new FieldValueEmptyException('name', ['name' => '']),
+                'expected' => new FieldDeserializationException(
+                    'name',
+                    ['name' => ''],
+                    FieldDeserializationException::CODE_EMPTY
+                ),
             ],
             'name incorrect type' => [
                 'data' => ['name' => true],
-                'expected' => new FieldValueTypeErrorException(
+                'expected' => (new FieldDeserializationException(
                     'name',
-                    'string',
-                    'boolean',
                     ['name' => true],
-                ),
+                    FieldDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'boolean')),
             ],
             'value missing' => [
                 'data' => ['name' => $name],
-                'expected' => new FieldValueMissingException('value', ['name' => $name]),
+                'expected' => new FieldDeserializationException(
+                    'value',
+                    ['name' => $name],
+                    FieldDeserializationException::CODE_MISSING
+                ),
             ],
             'value empty' => [
                 'data' => ['name' => $name, 'value' => null],
-                'expected' => new FieldValueEmptyException('value', ['name' => $name, 'value' => '']),
+                'expected' => new FieldDeserializationException(
+                    'value',
+                    ['name' => $name, 'value' => ''],
+                    FieldDeserializationException::CODE_EMPTY
+                ),
             ],
             'value not scalar' => [
                 'data' => ['name' => $name, 'value' => new \stdClass()],
-                'expected' => new FieldValueTypeErrorException(
+                'expected' => (new FieldDeserializationException(
                     'value',
-                    'scalar',
-                    'object',
                     ['name' => $name, 'value' => new \stdClass()],
-                ),
+                    FieldDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('scalar', 'object')),
             ],
             'value in array not scalar' => [
                 'data' => ['name' => $name, 'value' => [new \stdClass()]],
-                'expected' => new FieldValueTypeErrorException(
+                'expected' => (new FieldDeserializationException(
                     'value.0',
-                    'scalar',
-                    'object',
                     ['name' => $name, 'value' => [new \stdClass()]],
-                ),
+                    FieldDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('scalar', 'object')),
             ],
             'requirements data type missing' => [
                 'data' => ['name' => $name, 'value' => '', 'requirements' => []],
-                'expected' => new FieldValueMissingException(
+                'expected' => new FieldDeserializationException(
                     'requirements.data_type',
-                    ['name' => $name, 'value' => '', 'requirements' => []]
+                    ['name' => $name, 'value' => '', 'requirements' => []],
+                    FieldDeserializationException::CODE_MISSING
                 ),
             ],
             'requirements data type empty' => [
@@ -119,7 +131,7 @@ class DeserializerTest extends TestCase
                         'data_type' => '',
                     ],
                 ],
-                'expected' => new FieldValueEmptyException(
+                'expected' => new FieldDeserializationException(
                     'requirements.data_type',
                     [
                         'name' => $name,
@@ -128,6 +140,7 @@ class DeserializerTest extends TestCase
                             'data_type' => '',
                         ],
                     ],
+                    FieldDeserializationException::CODE_EMPTY
                 ),
             ],
             'requirements data type incorrect type' => [
@@ -138,10 +151,8 @@ class DeserializerTest extends TestCase
                         'data_type' => 123,
                     ],
                 ],
-                'expected' => new FieldValueTypeErrorException(
+                'expected' => (new FieldDeserializationException(
                     'requirements.data_type',
-                    'string',
-                    'integer',
                     [
                         'name' => $name,
                         'value' => '',
@@ -149,7 +160,8 @@ class DeserializerTest extends TestCase
                             'data_type' => 123,
                         ],
                     ],
-                ),
+                    FieldDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'requirements size minimum not an integer' => [
                 'data' => [
@@ -162,7 +174,7 @@ class DeserializerTest extends TestCase
                         ],
                     ],
                 ],
-                'expected' => new FieldValueInvalidException(
+                'expected' => new FieldDeserializationException(
                     'requirements.size.minimum',
                     [
                         'name' => $name,
@@ -174,6 +186,7 @@ class DeserializerTest extends TestCase
                             ],
                         ],
                     ],
+                    FieldDeserializationException::CODE_INVALID
                 ),
             ],
         ];
