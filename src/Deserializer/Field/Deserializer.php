@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Deserializer\Field;
 
-use SmartAssert\ServiceRequest\Exception\FieldDeserializationException;
+use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Field\Field;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
@@ -18,7 +18,7 @@ class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws FieldDeserializationException
+     * @throws DeserializationException
      */
     public function deserialize(array $data): FieldInterface
     {
@@ -42,26 +42,26 @@ class Deserializer
      *
      * @return non-empty-string
      *
-     * @throws FieldDeserializationException
+     * @throws DeserializationException
      */
     private function findName(array $data): string
     {
         if (!array_key_exists('name', $data)) {
-            throw new FieldDeserializationException('name', $data, FieldDeserializationException::CODE_MISSING);
+            throw new DeserializationException('name', $data, DeserializationException::CODE_MISSING);
         }
 
         $name = $data['name'];
         if (!is_string($name)) {
-            throw (new FieldDeserializationException(
+            throw (new DeserializationException(
                 'name',
                 $data,
-                FieldDeserializationException::CODE_INVALID
+                DeserializationException::CODE_INVALID
             ))->withContext(new TypeErrorContext('string', gettype($name)));
         }
 
         $name = trim($name);
         if ('' === $name) {
-            throw new FieldDeserializationException('name', $data, FieldDeserializationException::CODE_EMPTY);
+            throw new DeserializationException('name', $data, DeserializationException::CODE_EMPTY);
         }
 
         return $name;
@@ -72,35 +72,35 @@ class Deserializer
      *
      * @return array<scalar>|scalar
      *
-     * @throws FieldDeserializationException
+     * @throws DeserializationException
      */
     private function findValue(array $data): array|bool|float|int|string
     {
         if (!array_key_exists('value', $data)) {
-            throw new FieldDeserializationException('value', $data, FieldDeserializationException::CODE_MISSING);
+            throw new DeserializationException('value', $data, DeserializationException::CODE_MISSING);
         }
 
         $value = $data['value'];
         if (null === $value) {
-            throw new FieldDeserializationException('value', $data, FieldDeserializationException::CODE_EMPTY);
+            throw new DeserializationException('value', $data, DeserializationException::CODE_EMPTY);
         }
 
         if (is_array($value)) {
             foreach ($value as $itemKey => $item) {
                 if (!is_scalar($item)) {
-                    throw (new FieldDeserializationException(
+                    throw (new DeserializationException(
                         'value.' . $itemKey,
                         $data,
-                        FieldDeserializationException::CODE_INVALID
+                        DeserializationException::CODE_INVALID
                     ))->withContext(new TypeErrorContext('scalar', gettype($item)));
                 }
             }
         } else {
             if (!is_scalar($value)) {
-                throw (new FieldDeserializationException(
+                throw (new DeserializationException(
                     'value',
                     $data,
-                    FieldDeserializationException::CODE_INVALID
+                    DeserializationException::CODE_INVALID
                 ))->withContext(new TypeErrorContext('scalar', gettype($value)));
             }
         }
@@ -111,7 +111,7 @@ class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws FieldDeserializationException
+     * @throws DeserializationException
      */
     private function createRequirements(array $data): ?RequirementsInterface
     {
@@ -122,28 +122,28 @@ class Deserializer
         $requirementsData = $data['requirements'];
 
         if (!array_key_exists('data_type', $requirementsData)) {
-            throw new FieldDeserializationException(
+            throw new DeserializationException(
                 'requirements.data_type',
                 $data,
-                FieldDeserializationException::CODE_MISSING
+                DeserializationException::CODE_MISSING
             );
         }
 
         $dataType = $requirementsData['data_type'];
         if (!is_string($dataType)) {
-            throw (new FieldDeserializationException(
+            throw (new DeserializationException(
                 'requirements.data_type',
                 $data,
-                FieldDeserializationException::CODE_INVALID
+                DeserializationException::CODE_INVALID
             ))->withContext(new TypeErrorContext('string', gettype($dataType)));
         }
 
         $dataType = trim($dataType);
         if ('' === $dataType) {
-            throw new FieldDeserializationException(
+            throw new DeserializationException(
                 'requirements.data_type',
                 $data,
-                FieldDeserializationException::CODE_EMPTY
+                DeserializationException::CODE_EMPTY
             );
         }
 
@@ -153,7 +153,7 @@ class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws FieldDeserializationException
+     * @throws DeserializationException
      */
     private function createRequirementsSize(array $data): ?SizeInterface
     {
@@ -166,10 +166,10 @@ class Deserializer
             $minimum = $sizeData['minimum'] ?? null;
             $minimum = is_int($minimum) ? $minimum : null;
             if (null === $minimum) {
-                throw new FieldDeserializationException(
+                throw new DeserializationException(
                     'requirements.size.minimum',
                     $data,
-                    FieldDeserializationException::CODE_INVALID
+                    DeserializationException::CODE_INVALID
                 );
             }
 

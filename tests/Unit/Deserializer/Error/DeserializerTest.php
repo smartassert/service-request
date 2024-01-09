@@ -13,8 +13,8 @@ use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializ
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
+use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\FieldDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
@@ -198,7 +198,7 @@ class DeserializerTest extends TestCase
                         'field' => [],
                     ],
                     ErrorDeserializationException::CODE_INVALID,
-                    new FieldDeserializationException('name', [], FieldDeserializationException::CODE_MISSING)
+                    new DeserializationException('name', [], DeserializationException::CODE_MISSING)
                 ),
             ],
             'duplicate object error field missing' => [
@@ -245,7 +245,7 @@ class DeserializerTest extends TestCase
                         'field' => [],
                     ],
                     ErrorDeserializationException::CODE_INVALID,
-                    new FieldDeserializationException('name', [], FieldDeserializationException::CODE_MISSING)
+                    new DeserializationException('name', [], DeserializationException::CODE_MISSING)
                 ),
             ],
             'modify read-only entity error entity missing' => [

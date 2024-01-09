@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Exception;
 
-class FieldDeserializationException extends \Exception
+class DeserializationException extends \Exception
 {
     public const CODE_MISSING = 1;
     public const CODE_EMPTY = 2;
@@ -27,7 +27,7 @@ class FieldDeserializationException extends \Exception
 
     public function withContext(ErrorContextInterface $context): self
     {
-        $new = new FieldDeserializationException($this->name, $this->data, $this->code);
+        $new = new DeserializationException($this->name, $this->data, $this->code);
         $new->context = $context;
 
         return $new;
