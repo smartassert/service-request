@@ -10,6 +10,7 @@ use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
+use SmartAssert\ServiceRequest\Exception\UnspecifiedErrorClassException;
 
 readonly class Deserializer
 {
@@ -39,15 +40,16 @@ readonly class Deserializer
      * @param array<mixed> $data
      *
      * @throws ErrorValueEmptyException
+     * @throws ErrorValueInvalidException
      * @throws ErrorValueMissingException
      * @throws ErrorValueTypeErrorException
      * @throws UnknownErrorClassException
-     * @throws ErrorValueInvalidException
+     * @throws UnspecifiedErrorClassException
      */
     public function deserialize(array $data): ErrorInterface
     {
         if (!array_key_exists('class', $data)) {
-            throw new ErrorValueMissingException(null, 'class', $data);
+            throw new UnspecifiedErrorClassException($data);
         }
 
         $errorClass = $data['class'];

@@ -19,6 +19,7 @@ use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
+use SmartAssert\ServiceRequest\Exception\UnspecifiedErrorClassException;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\DuplicateObjectErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\ModifyReadOnlyEntityErrorTrait;
@@ -57,7 +58,7 @@ class DeserializerTest extends TestCase
             'error class missing' => [
                 'deserializer' => new Deserializer([]),
                 'data' => [],
-                'expected' => new ErrorValueMissingException(null, 'class', []),
+                'expected' => new UnspecifiedErrorClassException([]),
             ],
             'error class empty' => [
                 'deserializer' => new Deserializer([]),
