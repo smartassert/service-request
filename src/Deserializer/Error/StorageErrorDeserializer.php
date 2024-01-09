@@ -8,7 +8,6 @@ use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\StorageError;
 use SmartAssert\ServiceRequest\Error\StorageErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 
 readonly class StorageErrorDeserializer implements TypeDeserializerInterface
@@ -33,7 +32,12 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         }
 
         if (!array_key_exists('object_type', $data)) {
-            throw new ErrorValueMissingException($class, 'object_type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'object_type',
+                $data,
+                ErrorDeserializationException::CODE_MISSING,
+            );
         }
 
         $objectType = $data['object_type'];

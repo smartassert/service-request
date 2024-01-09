@@ -14,7 +14,6 @@ use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
@@ -109,12 +108,13 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'bad_request',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'bad_request',
                     'type',
                     [
                         'class' => 'bad_request',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'bad request error type empty' => [
@@ -156,13 +156,14 @@ class DeserializerTest extends TestCase
                     'class' => 'bad_request',
                     'type' => 'too_large',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'bad_request',
                     'field',
                     [
                         'class' => 'bad_request',
                         'type' => 'too_large',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'bad request error field not an array' => [
@@ -208,12 +209,13 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'duplicate',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'duplicate',
                     'field',
                     [
                         'class' => 'duplicate',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'duplicate error field not an array' => [
@@ -255,12 +257,13 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'modify_read_only',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity',
                     [
                         'class' => 'modify_read_only',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'modify read-only entity entity not an array' => [
@@ -286,13 +289,14 @@ class DeserializerTest extends TestCase
                     'class' => 'modify_read_only',
                     'entity' => [],
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.id',
                     [
                         'class' => 'modify_read_only',
                         'entity' => [],
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'modify read-only entity entity.id empty' => [
@@ -344,7 +348,7 @@ class DeserializerTest extends TestCase
                         'id' => 'entity_id',
                     ],
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.type',
                     [
@@ -353,6 +357,7 @@ class DeserializerTest extends TestCase
                             'id' => 'entity_id',
                         ],
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'modify read-only entity entity.type empty' => [
@@ -423,13 +428,14 @@ class DeserializerTest extends TestCase
                     'class' => 'storage',
                     'type' => null,
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'storage',
                     'object_type',
                     [
                         'class' => 'storage',
                         'type' => null,
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'storage error object type empty' => [

@@ -8,7 +8,6 @@ use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityError;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
 use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 
 readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInterface
@@ -20,7 +19,12 @@ readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInter
         }
 
         if (!array_key_exists('entity', $data)) {
-            throw new ErrorValueMissingException($class, 'entity', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity',
+                $data,
+                ErrorDeserializationException::CODE_MISSING,
+            );
         }
 
         $entityData = $data['entity'];
@@ -29,7 +33,12 @@ readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInter
         }
 
         if (!array_key_exists('id', $entityData)) {
-            throw new ErrorValueMissingException($class, 'entity.id', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.id',
+                $data,
+                ErrorDeserializationException::CODE_MISSING
+            );
         }
 
         $entityId = $entityData['id'];
@@ -48,7 +57,12 @@ readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInter
         }
 
         if (!array_key_exists('type', $entityData)) {
-            throw new ErrorValueMissingException($class, 'entity.type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.type',
+                $data,
+                ErrorDeserializationException::CODE_MISSING
+            );
         }
 
         $entityType = $entityData['type'];
