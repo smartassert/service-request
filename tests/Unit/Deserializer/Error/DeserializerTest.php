@@ -13,13 +13,10 @@ use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializ
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
-use SmartAssert\ServiceRequest\Exception\UnspecifiedErrorClassException;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\DuplicateObjectErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\ModifyReadOnlyEntityErrorTrait;
@@ -58,19 +55,25 @@ class DeserializerTest extends TestCase
             'error class missing' => [
                 'deserializer' => new Deserializer([]),
                 'data' => [],
-                'expected' => new UnspecifiedErrorClassException([]),
+                'expected' => new ErrorDeserializationException(
+                    '',
+                    'class',
+                    [],
+                    ErrorDeserializationException::CODE_MISSING
+                ),
             ],
             'error class empty' => [
                 'deserializer' => new Deserializer([]),
                 'data' => [
                     'class' => '',
                 ],
-                'expected' => new ErrorValueEmptyException(
-                    null,
+                'expected' => new ErrorDeserializationException(
+                    '',
                     'class',
                     [
                         'class' => '',
-                    ]
+                    ],
+                    ErrorDeserializationException::CODE_EMPTY,
                 ),
             ],
             'error class not a string' => [
@@ -78,15 +81,14 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
-                    null,
+                'expected' => (new ErrorDeserializationException(
+                    '',
                     'class',
-                    'string',
-                    'integer',
                     [
                         'class' => 123,
-                    ]
-                ),
+                    ],
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'unknown error class' => [
                 'deserializer' => new Deserializer([]),
@@ -105,12 +107,13 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'bad_request',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'bad_request',
                     'type',
                     [
                         'class' => 'bad_request',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'bad request error type empty' => [
@@ -119,13 +122,14 @@ class DeserializerTest extends TestCase
                     'class' => 'bad_request',
                     'type' => '',
                 ],
-                'expected' => new ErrorValueEmptyException(
+                'expected' => new ErrorDeserializationException(
                     'bad_request',
                     'type',
                     [
                         'class' => 'bad_request',
                         'type' => '',
                     ],
+                    ErrorDeserializationException::CODE_EMPTY
                 ),
             ],
             'bad request error type not a string' => [
@@ -134,16 +138,15 @@ class DeserializerTest extends TestCase
                     'class' => 'bad_request',
                     'type' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'bad_request',
                     'type',
-                    'string',
-                    'integer',
                     [
                         'class' => 'bad_request',
                         'type' => 123,
                     ],
-                ),
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'bad request error field missing' => [
                 'deserializer' => self::createDeserializer(),
@@ -151,13 +154,14 @@ class DeserializerTest extends TestCase
                     'class' => 'bad_request',
                     'type' => 'too_large',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'bad_request',
                     'field',
                     [
                         'class' => 'bad_request',
                         'type' => 'too_large',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'bad request error field not an array' => [
@@ -167,17 +171,16 @@ class DeserializerTest extends TestCase
                     'type' => 'too_large',
                     'field' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'bad_request',
                     'field',
-                    'array',
-                    'integer',
                     [
                         'class' => 'bad_request',
                         'type' => 'too_large',
                         'field' => 123,
                     ],
-                ),
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('array', 'integer')),
             ],
             'bad request error field invalid' => [
                 'deserializer' => self::createDeserializer(),
@@ -186,7 +189,7 @@ class DeserializerTest extends TestCase
                     'type' => 'too_large',
                     'field' => [],
                 ],
-                'expected' => new ErrorValueInvalidException(
+                'expected' => new ErrorDeserializationException(
                     'bad_request',
                     'field',
                     [
@@ -194,6 +197,7 @@ class DeserializerTest extends TestCase
                         'type' => 'too_large',
                         'field' => [],
                     ],
+                    ErrorDeserializationException::CODE_INVALID,
                     new FieldValueMissingException('name', []),
                 ),
             ],
@@ -202,12 +206,13 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'duplicate',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'duplicate',
                     'field',
                     [
                         'class' => 'duplicate',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'duplicate error field not an array' => [
@@ -216,16 +221,15 @@ class DeserializerTest extends TestCase
                     'class' => 'duplicate',
                     'field' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'duplicate',
                     'field',
-                    'array',
-                    'integer',
                     [
                         'class' => 'duplicate',
                         'field' => 123,
                     ],
-                ),
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('array', 'integer')),
             ],
             'duplicate object error field invalid' => [
                 'deserializer' => self::createDeserializer(),
@@ -233,13 +237,14 @@ class DeserializerTest extends TestCase
                     'class' => 'duplicate',
                     'field' => [],
                 ],
-                'expected' => new ErrorValueInvalidException(
+                'expected' => new ErrorDeserializationException(
                     'duplicate',
                     'field',
                     [
                         'class' => 'duplicate',
                         'field' => [],
                     ],
+                    ErrorDeserializationException::CODE_INVALID,
                     new FieldValueMissingException('name', []),
                 ),
             ],
@@ -248,12 +253,13 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'modify_read_only',
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity',
                     [
                         'class' => 'modify_read_only',
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'modify read-only entity entity not an array' => [
@@ -262,16 +268,15 @@ class DeserializerTest extends TestCase
                     'class' => 'modify_read_only',
                     'entity' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'modify_read_only',
                     'entity',
-                    'array',
-                    'integer',
                     [
                         'class' => 'modify_read_only',
                         'entity' => 123,
                     ],
-                ),
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('array', 'integer')),
             ],
             'modify read-only entity entity.id missing' => [
                 'deserializer' => self::createDeserializer(),
@@ -279,13 +284,14 @@ class DeserializerTest extends TestCase
                     'class' => 'modify_read_only',
                     'entity' => [],
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.id',
                     [
                         'class' => 'modify_read_only',
                         'entity' => [],
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'modify read-only entity entity.id empty' => [
@@ -296,7 +302,7 @@ class DeserializerTest extends TestCase
                         'id' => '',
                     ],
                 ],
-                'expected' => new ErrorValueInvalidException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.id',
                     [
@@ -305,6 +311,7 @@ class DeserializerTest extends TestCase
                             'id' => '',
                         ],
                     ],
+                    ErrorDeserializationException::CODE_EMPTY,
                 ),
             ],
             'modify read-only entity entity.id not a string' => [
@@ -315,18 +322,17 @@ class DeserializerTest extends TestCase
                         'id' => 123,
                     ],
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.id',
-                    'string',
-                    'integer',
                     [
                         'class' => 'modify_read_only',
                         'entity' => [
                             'id' => 123,
                         ],
-                    ]
-                ),
+                    ],
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'modify read-only entity entity.type missing' => [
                 'deserializer' => self::createDeserializer(),
@@ -336,7 +342,7 @@ class DeserializerTest extends TestCase
                         'id' => 'entity_id',
                     ],
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.type',
                     [
@@ -345,6 +351,7 @@ class DeserializerTest extends TestCase
                             'id' => 'entity_id',
                         ],
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'modify read-only entity entity.type empty' => [
@@ -356,7 +363,7 @@ class DeserializerTest extends TestCase
                         'type' => '',
                     ],
                 ],
-                'expected' => new ErrorValueInvalidException(
+                'expected' => new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.type',
                     [
@@ -366,6 +373,7 @@ class DeserializerTest extends TestCase
                             'type' => '',
                         ],
                     ],
+                    ErrorDeserializationException::CODE_EMPTY,
                 ),
             ],
             'modify read-only entity entity.type not a string' => [
@@ -377,19 +385,18 @@ class DeserializerTest extends TestCase
                         'type' => 123,
                     ],
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'modify_read_only',
                     'entity.type',
-                    'string',
-                    'integer',
                     [
                         'class' => 'modify_read_only',
                         'entity' => [
                             'id' => 'entity_id',
                             'type' => 123,
                         ],
-                    ]
-                ),
+                    ],
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'storage error type is not a string' => [
                 'deserializer' => self::createDeserializer(),
@@ -397,16 +404,15 @@ class DeserializerTest extends TestCase
                     'class' => 'storage',
                     'type' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'storage',
                     'type',
-                    'string',
-                    'integer',
                     [
                         'class' => 'storage',
                         'type' => 123,
-                    ]
-                ),
+                    ],
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'storage error object type missing' => [
                 'deserializer' => self::createDeserializer(),
@@ -414,13 +420,14 @@ class DeserializerTest extends TestCase
                     'class' => 'storage',
                     'type' => null,
                 ],
-                'expected' => new ErrorValueMissingException(
+                'expected' => new ErrorDeserializationException(
                     'storage',
                     'object_type',
                     [
                         'class' => 'storage',
                         'type' => null,
                     ],
+                    ErrorDeserializationException::CODE_MISSING,
                 ),
             ],
             'storage error object type empty' => [
@@ -430,7 +437,7 @@ class DeserializerTest extends TestCase
                     'type' => null,
                     'object_type' => '',
                 ],
-                'expected' => new ErrorValueEmptyException(
+                'expected' => new ErrorDeserializationException(
                     'storage',
                     'object_type',
                     [
@@ -438,6 +445,7 @@ class DeserializerTest extends TestCase
                         'type' => null,
                         'object_type' => '',
                     ],
+                    ErrorDeserializationException::CODE_EMPTY,
                 ),
             ],
             'storage error object type not a string' => [
@@ -447,17 +455,16 @@ class DeserializerTest extends TestCase
                     'type' => null,
                     'object_type' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'storage',
                     'object_type',
-                    'string',
-                    'integer',
                     [
                         'class' => 'storage',
                         'type' => null,
                         'object_type' => 123,
                     ],
-                ),
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'storage error location is not a string' => [
                 'deserializer' => self::createDeserializer(),
@@ -467,18 +474,17 @@ class DeserializerTest extends TestCase
                     'object_type' => 'file_source',
                     'location' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'storage',
                     'location',
-                    'string',
-                    'integer',
                     [
                         'class' => 'storage',
                         'type' => null,
                         'object_type' => 'file_source',
                         'location' => 123,
-                    ]
-                ),
+                    ],
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'storage error context is not an array' => [
                 'deserializer' => self::createDeserializer(),
@@ -489,19 +495,18 @@ class DeserializerTest extends TestCase
                     'location' => null,
                     'context' => 123,
                 ],
-                'expected' => new ErrorValueTypeErrorException(
+                'expected' => (new ErrorDeserializationException(
                     'storage',
                     'context',
-                    'array',
-                    'integer',
                     [
                         'class' => 'storage',
                         'type' => null,
                         'object_type' => 'file_source',
                         'location' => null,
                         'context' => 123,
-                    ]
-                ),
+                    ],
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('array', 'integer')),
             ],
         ];
     }

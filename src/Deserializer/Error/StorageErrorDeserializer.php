@@ -7,9 +7,8 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\StorageError;
 use SmartAssert\ServiceRequest\Error\StorageErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 
 readonly class StorageErrorDeserializer implements TypeDeserializerInterface
 {
@@ -23,7 +22,12 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         if (array_key_exists('type', $data)) {
             $type = $data['type'];
             if (!is_string($type) && null !== $type) {
-                throw new ErrorValueTypeErrorException($class, 'type', 'string', gettype($type), $data);
+                throw (new ErrorDeserializationException(
+                    $class,
+                    'type',
+                    $data,
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', gettype($type)));
             }
 
             $type = trim($type ?? '');
@@ -33,24 +37,44 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         }
 
         if (!array_key_exists('object_type', $data)) {
-            throw new ErrorValueMissingException($class, 'object_type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'object_type',
+                $data,
+                ErrorDeserializationException::CODE_MISSING,
+            );
         }
 
         $objectType = $data['object_type'];
         if (!is_string($objectType)) {
-            throw new ErrorValueTypeErrorException($class, 'object_type', 'string', gettype($objectType), $data);
+            throw (new ErrorDeserializationException(
+                $class,
+                'object_type',
+                $data,
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($objectType)));
         }
 
         $objectType = trim($objectType);
         if ('' === $objectType) {
-            throw new ErrorValueEmptyException($class, 'object_type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'object_type',
+                $data,
+                ErrorDeserializationException::CODE_EMPTY
+            );
         }
 
         $location = null;
         if (array_key_exists('location', $data)) {
             $location = $data['location'];
             if (!is_string($location) && null !== $location) {
-                throw new ErrorValueTypeErrorException($class, 'location', 'string', gettype($location), $data);
+                throw (new ErrorDeserializationException(
+                    $class,
+                    'location',
+                    $data,
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', gettype($location)));
             }
 
             $location = trim($location ?? '');
@@ -63,7 +87,12 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         if (array_key_exists('context', $data)) {
             $context = $data['context'];
             if (!is_array($context)) {
-                throw new ErrorValueTypeErrorException($class, 'context', 'array', gettype($context), $data);
+                throw (new ErrorDeserializationException(
+                    $class,
+                    'context',
+                    $data,
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('array', gettype($context)));
             }
         }
 

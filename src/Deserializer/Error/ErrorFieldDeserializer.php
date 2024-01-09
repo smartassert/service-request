@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
-use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
 
 readonly class ErrorFieldDeserializer
@@ -20,25 +19,39 @@ readonly class ErrorFieldDeserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws ErrorValueInvalidException
-     * @throws ErrorValueMissingException
-     * @throws ErrorValueTypeErrorException
+     * @throws ErrorDeserializationException
      */
     public function deserialize(string $class, array $data): FieldInterface
     {
         if (!array_key_exists('field', $data)) {
-            throw new ErrorValueMissingException($class, 'field', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'field',
+                $data,
+                ErrorDeserializationException::CODE_MISSING,
+            );
         }
 
         $fieldData = $data['field'];
         if (!is_array($fieldData)) {
-            throw new ErrorValueTypeErrorException($class, 'field', 'array', gettype($fieldData), $data);
+            throw (new ErrorDeserializationException(
+                $class,
+                'field',
+                $data,
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('array', gettype($fieldData)));
         }
 
         try {
             $field = $this->fieldDeserializer->deserialize($fieldData);
         } catch (\Throwable $fieldDeserializeException) {
-            throw new ErrorValueInvalidException($class, 'field', $data, $fieldDeserializeException);
+            throw new ErrorDeserializationException(
+                $class,
+                'field',
+                $data,
+                ErrorDeserializationException::CODE_INVALID,
+                $fieldDeserializeException,
+            );
         }
 
         return $field;

@@ -7,9 +7,8 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 
 readonly class BadRequestErrorDeserializer implements TypeDeserializerInterface
 {
@@ -25,17 +24,22 @@ readonly class BadRequestErrorDeserializer implements TypeDeserializerInterface
         }
 
         if (!array_key_exists('type', $data)) {
-            throw new ErrorValueMissingException($class, 'type', $data);
+            throw new ErrorDeserializationException($class, 'type', $data, ErrorDeserializationException::CODE_MISSING);
         }
 
         $type = $data['type'];
         if (!is_string($type)) {
-            throw new ErrorValueTypeErrorException($class, 'type', 'string', gettype($type), $data);
+            throw (new ErrorDeserializationException(
+                $class,
+                'type',
+                $data,
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($type)));
         }
 
         $type = trim($type);
         if ('' === $type) {
-            throw new ErrorValueEmptyException($class, 'type', $data);
+            throw new ErrorDeserializationException($class, 'type', $data, ErrorDeserializationException::CODE_EMPTY);
         }
 
         return new BadRequestError(

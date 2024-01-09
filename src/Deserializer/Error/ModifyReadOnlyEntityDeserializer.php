@@ -7,9 +7,8 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityError;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 
 readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInterface
 {
@@ -20,40 +19,80 @@ readonly class ModifyReadOnlyEntityDeserializer implements TypeDeserializerInter
         }
 
         if (!array_key_exists('entity', $data)) {
-            throw new ErrorValueMissingException($class, 'entity', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity',
+                $data,
+                ErrorDeserializationException::CODE_MISSING,
+            );
         }
 
         $entityData = $data['entity'];
         if (!is_array($entityData)) {
-            throw new ErrorValueTypeErrorException($class, 'entity', 'array', gettype($entityData), $data);
+            throw (new ErrorDeserializationException(
+                $class,
+                'entity',
+                $data,
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('array', gettype($entityData)));
         }
 
         if (!array_key_exists('id', $entityData)) {
-            throw new ErrorValueMissingException($class, 'entity.id', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.id',
+                $data,
+                ErrorDeserializationException::CODE_MISSING
+            );
         }
 
         $entityId = $entityData['id'];
         if (!is_string($entityId)) {
-            throw new ErrorValueTypeErrorException($class, 'entity.id', 'string', gettype($entityId), $data);
+            throw (new ErrorDeserializationException(
+                $class,
+                'entity.id',
+                $data,
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($entityId)));
         }
 
         $entityId = trim($entityId);
         if ('' === $entityId) {
-            throw new ErrorValueInvalidException($class, 'entity.id', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.id',
+                $data,
+                ErrorDeserializationException::CODE_EMPTY,
+            );
         }
 
         if (!array_key_exists('type', $entityData)) {
-            throw new ErrorValueMissingException($class, 'entity.type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.type',
+                $data,
+                ErrorDeserializationException::CODE_MISSING
+            );
         }
 
         $entityType = $entityData['type'];
         if (!is_string($entityType)) {
-            throw new ErrorValueTypeErrorException($class, 'entity.type', 'string', gettype($entityType), $data);
+            throw (new ErrorDeserializationException(
+                $class,
+                'entity.type',
+                $data,
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($entityType)));
         }
 
         $entityType = trim($entityType);
         if ('' === $entityType) {
-            throw new ErrorValueInvalidException($class, 'entity.type', $data);
+            throw new ErrorDeserializationException(
+                $class,
+                'entity.type',
+                $data,
+                ErrorDeserializationException::CODE_EMPTY,
+            );
         }
 
         return new ModifyReadOnlyEntityError($entityId, $entityType);

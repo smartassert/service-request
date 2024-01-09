@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
-use SmartAssert\ServiceRequest\Exception\ErrorValueEmptyException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueInvalidException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueMissingException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
-use SmartAssert\ServiceRequest\Exception\UnspecifiedErrorClassException;
 
 readonly class Deserializer
 {
@@ -39,32 +36,27 @@ readonly class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws ErrorValueEmptyException
-     * @throws ErrorValueInvalidException
-     * @throws ErrorValueMissingException
-     * @throws ErrorValueTypeErrorException
      * @throws UnknownErrorClassException
-     * @throws UnspecifiedErrorClassException
+     * @throws ErrorDeserializationException
      */
     public function deserialize(array $data): ErrorInterface
     {
         if (!array_key_exists('class', $data)) {
-            throw new UnspecifiedErrorClassException($data);
+            throw new ErrorDeserializationException('', 'class', $data, ErrorDeserializationException::CODE_MISSING);
         }
 
         $errorClass = $data['class'];
         if (!is_string($errorClass)) {
-            throw new ErrorValueTypeErrorException(
-                null,
+            throw (new ErrorDeserializationException(
+                '',
                 'class',
-                'string',
-                gettype($errorClass),
                 $data,
-            );
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($errorClass)));
         }
 
         if ('' === $errorClass) {
-            throw new ErrorValueEmptyException(null, 'class', $data);
+            throw new ErrorDeserializationException('', 'class', $data, ErrorDeserializationException::CODE_EMPTY);
         }
 
         foreach ($this->typeDeserializers as $typeDeserializer) {
