@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
+use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
@@ -26,20 +27,20 @@ readonly class ErrorFieldDeserializer
         if (!array_key_exists('field', $data)) {
             throw new ErrorDeserializationException(
                 $class,
-                'field',
-                $data,
-                ErrorDeserializationException::CODE_MISSING,
+                new DeserializationException('field', $data, DeserializationException::CODE_MISSING)
             );
         }
 
         $fieldData = $data['field'];
         if (!is_array($fieldData)) {
-            throw (new ErrorDeserializationException(
+            throw new ErrorDeserializationException(
                 $class,
-                'field',
-                $data,
-                ErrorDeserializationException::CODE_INVALID
-            ))->withContext(new TypeErrorContext('array', gettype($fieldData)));
+                (new DeserializationException(
+                    'field',
+                    $data,
+                    DeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('array', gettype($fieldData)))
+            );
         }
 
         try {
@@ -47,10 +48,12 @@ readonly class ErrorFieldDeserializer
         } catch (\Throwable $fieldDeserializeException) {
             throw new ErrorDeserializationException(
                 $class,
-                'field',
-                $data,
-                ErrorDeserializationException::CODE_INVALID,
-                $fieldDeserializeException,
+                new DeserializationException(
+                    'field',
+                    $data,
+                    DeserializationException::CODE_INVALID,
+                    $fieldDeserializeException,
+                )
             );
         }
 

@@ -7,6 +7,7 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\StorageError;
 use SmartAssert\ServiceRequest\Error\StorageErrorInterface;
+use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 
@@ -22,12 +23,14 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         if (array_key_exists('type', $data)) {
             $type = $data['type'];
             if (!is_string($type) && null !== $type) {
-                throw (new ErrorDeserializationException(
+                throw new ErrorDeserializationException(
                     $class,
-                    'type',
-                    $data,
-                    ErrorDeserializationException::CODE_INVALID
-                ))->withContext(new TypeErrorContext('string', gettype($type)));
+                    (new DeserializationException(
+                        'type',
+                        $data,
+                        DeserializationException::CODE_INVALID
+                    ))->withContext(new TypeErrorContext('string', gettype($type)))
+                );
             }
 
             $type = trim($type ?? '');
@@ -39,29 +42,27 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         if (!array_key_exists('object_type', $data)) {
             throw new ErrorDeserializationException(
                 $class,
-                'object_type',
-                $data,
-                ErrorDeserializationException::CODE_MISSING,
+                new DeserializationException('object_type', $data, DeserializationException::CODE_MISSING)
             );
         }
 
         $objectType = $data['object_type'];
         if (!is_string($objectType)) {
-            throw (new ErrorDeserializationException(
+            throw new ErrorDeserializationException(
                 $class,
-                'object_type',
-                $data,
-                ErrorDeserializationException::CODE_INVALID
-            ))->withContext(new TypeErrorContext('string', gettype($objectType)));
+                (new DeserializationException(
+                    'object_type',
+                    $data,
+                    DeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', gettype($objectType)))
+            );
         }
 
         $objectType = trim($objectType);
         if ('' === $objectType) {
             throw new ErrorDeserializationException(
                 $class,
-                'object_type',
-                $data,
-                ErrorDeserializationException::CODE_EMPTY
+                new DeserializationException('object_type', $data, DeserializationException::CODE_EMPTY)
             );
         }
 
@@ -69,12 +70,14 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         if (array_key_exists('location', $data)) {
             $location = $data['location'];
             if (!is_string($location) && null !== $location) {
-                throw (new ErrorDeserializationException(
+                throw new ErrorDeserializationException(
                     $class,
-                    'location',
-                    $data,
-                    ErrorDeserializationException::CODE_INVALID
-                ))->withContext(new TypeErrorContext('string', gettype($location)));
+                    (new DeserializationException(
+                        'location',
+                        $data,
+                        DeserializationException::CODE_INVALID
+                    ))->withContext(new TypeErrorContext('string', gettype($location)))
+                );
             }
 
             $location = trim($location ?? '');
@@ -87,12 +90,14 @@ readonly class StorageErrorDeserializer implements TypeDeserializerInterface
         if (array_key_exists('context', $data)) {
             $context = $data['context'];
             if (!is_array($context)) {
-                throw (new ErrorDeserializationException(
+                throw new ErrorDeserializationException(
                     $class,
-                    'context',
-                    $data,
-                    ErrorDeserializationException::CODE_INVALID
-                ))->withContext(new TypeErrorContext('array', gettype($context)));
+                    (new DeserializationException(
+                        'context',
+                        $data,
+                        DeserializationException::CODE_INVALID
+                    ))->withContext(new TypeErrorContext('array', gettype($context)))
+                );
             }
         }
 
