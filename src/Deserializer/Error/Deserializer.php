@@ -53,13 +53,12 @@ readonly class Deserializer
 
         $errorClass = $data['class'];
         if (!is_string($errorClass)) {
-            throw new ErrorDeserializationException(
+            throw (new ErrorDeserializationException(
                 '',
                 'class',
                 $data,
-                ErrorDeserializationException::CODE_INVALID,
-                new TypeErrorContext('string', gettype($errorClass))
-            );
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('string', gettype($errorClass)));
         }
 
         if ('' === $errorClass) {

@@ -84,15 +84,14 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 123,
                 ],
-                'expected' => new ErrorDeserializationException(
+                'expected' => (new ErrorDeserializationException(
                     '',
                     'class',
                     [
                         'class' => 123,
                     ],
-                    ErrorDeserializationException::CODE_INVALID,
-                    new TypeErrorContext('string', 'integer'),
-                ),
+                    ErrorDeserializationException::CODE_INVALID
+                ))->withContext(new TypeErrorContext('string', 'integer')),
             ],
             'unknown error class' => [
                 'deserializer' => new Deserializer([]),
