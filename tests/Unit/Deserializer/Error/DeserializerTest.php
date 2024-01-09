@@ -12,8 +12,6 @@ use SmartAssert\ServiceRequest\Deserializer\Error\ErrorFieldDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
-use SmartAssert\ServiceRequest\Error\DuplicateObjectError;
-use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityError;
 use SmartAssert\ServiceRequest\Error\ModifyReadOnlyEntityErrorInterface;
@@ -24,13 +22,13 @@ use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\FieldValueMissingException;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
-use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
+use SmartAssert\ServiceRequest\Tests\DataProvider\DuplicateObjectErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\StorageErrorDataProviderTrait;
 
 class DeserializerTest extends TestCase
 {
-    use FieldDataProviderTrait;
     use BadRequestErrorDataProvider;
+    use DuplicateObjectErrorDataProvider;
     use StorageErrorDataProviderTrait;
 
     /**
@@ -509,7 +507,7 @@ class DeserializerTest extends TestCase
 
     /**
      * @dataProvider badRequestErrorDataProvider
-     * @dataProvider deserializeDuplicateObjectErrorDataProvider
+     * @dataProvider duplicateObjectErrorDataProvider
      * @dataProvider deserializeModifyReadOnlyErrorDataProvider
      * @dataProvider storageErrorDataProvider
      *
@@ -523,31 +521,6 @@ class DeserializerTest extends TestCase
     /**
      * @return array<mixed>
      */
-    public static function deserializeDuplicateObjectErrorDataProvider(): array
-    {
-        $dataSets = [];
-
-        foreach (self::fieldDataProvider() as $fieldTestName => $data) {
-            \assert(is_array($data));
-            \assert(array_key_exists('field', $data));
-            \assert(array_key_exists('serialized', $data));
-
-            $testName = 'duplicate object error with field: ' . $fieldTestName;
-            $dataSets[$testName] = [
-                'error' => new DuplicateObjectError($data['field']),
-                'serialized' => [
-                    'class' => DuplicateObjectErrorInterface::ERROR_CLASS,
-                    'field' => $data['serialized'],
-                ],
-            ];
-        }
-
-        return $dataSets;
-    }
-
-    /**
-     * @return array<mixed>
-     */
     public static function deserializeModifyReadOnlyErrorDataProvider(): array
     {
         $entityId = md5((string) rand());
@@ -555,28 +528,6 @@ class DeserializerTest extends TestCase
 
         return [
             'modify read-only entity error' => [
-                'error' => new ModifyReadOnlyEntityError($entityId, $entityType),
-                'serialized' => [
-                    'class' => ModifyReadOnlyEntityErrorInterface::ERROR_CLASS,
-                    'entity' => [
-                        'id' => $entityId,
-                        'type' => $entityType,
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public static function deserializeStorageErrorDataProvider(): array
-    {
-        $entityId = md5((string) rand());
-        $entityType = md5((string) rand());
-
-        return [
-            'foo' => [
                 'error' => new ModifyReadOnlyEntityError($entityId, $entityType),
                 'serialized' => [
                     'class' => ModifyReadOnlyEntityErrorInterface::ERROR_CLASS,
