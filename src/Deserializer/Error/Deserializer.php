@@ -6,7 +6,6 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Exception\UnknownErrorClassException;
 
@@ -37,7 +36,6 @@ readonly class Deserializer
     /**
      * @param array<mixed> $data
      *
-     * @throws ErrorValueTypeErrorException
      * @throws UnknownErrorClassException
      * @throws ErrorDeserializationException
      */

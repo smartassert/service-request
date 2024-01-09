@@ -6,7 +6,7 @@ namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
-use SmartAssert\ServiceRequest\Exception\ErrorValueTypeErrorException;
+use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Field\FieldInterface;
 
 readonly class ErrorFieldDeserializer
@@ -20,7 +20,6 @@ readonly class ErrorFieldDeserializer
      * @param array<mixed> $data
      *
      * @throws ErrorDeserializationException
-     * @throws ErrorValueTypeErrorException
      */
     public function deserialize(string $class, array $data): FieldInterface
     {
@@ -35,7 +34,12 @@ readonly class ErrorFieldDeserializer
 
         $fieldData = $data['field'];
         if (!is_array($fieldData)) {
-            throw new ErrorValueTypeErrorException($class, 'field', 'array', gettype($fieldData), $data);
+            throw (new ErrorDeserializationException(
+                $class,
+                'field',
+                $data,
+                ErrorDeserializationException::CODE_INVALID
+            ))->withContext(new TypeErrorContext('array', gettype($fieldData)));
         }
 
         try {
