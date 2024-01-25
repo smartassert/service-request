@@ -9,7 +9,7 @@ use SmartAssert\ServiceRequest\Field\FieldInterface;
 /**
  * @phpstan-import-type SerializedDuplicateObjectError from DuplicateObjectErrorInterface
  */
-readonly class DuplicateObjectError extends Error implements DuplicateObjectErrorInterface
+readonly class DuplicateObjectError extends Error implements DuplicateObjectErrorInterface, HasFieldInterface
 {
     public function __construct(
         private FieldInterface $field,
