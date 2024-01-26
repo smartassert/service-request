@@ -17,8 +17,8 @@ class ParameterTest extends TestCase
      *
      * @param array<mixed> $serialized
      */
-    public function testSerializeSuccess(ParameterInterface $field, array $serialized): void
+    public function testSerializeSuccess(ParameterInterface $parameter, array $serialized): void
     {
-        self::assertSame($serialized, $field->serialize());
+        self::assertSame($serialized, $parameter->serialize());
     }
 }

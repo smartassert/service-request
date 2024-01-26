@@ -18,12 +18,12 @@ trait DuplicateObjectErrorDataProvider
     {
         $dataSets = [];
 
-        foreach (self::parameterDataProvider() as $fieldTestName => $data) {
+        foreach (self::parameterDataProvider() as $parameterTestName => $data) {
             \assert(is_array($data));
             \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
-            $testName = 'duplicate object error with field: ' . $fieldTestName;
+            $testName = 'duplicate object error with field: ' . $parameterTestName;
             $dataSets[$testName] = [
                 'error' => new DuplicateObjectError($data['parameter']),
                 'serialized' => [

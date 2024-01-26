@@ -19,12 +19,12 @@ trait BadRequestErrorDataProvider
         $errorType = md5((string) rand());
         $dataSets = [];
 
-        foreach (self::parameterDataProvider() as $fieldTestName => $data) {
+        foreach (self::parameterDataProvider() as $parameterTestName => $data) {
             \assert(is_array($data));
             \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
-            $testName = 'bad request error with field: ' . $fieldTestName;
+            $testName = 'bad request error with field: ' . $parameterTestName;
             $dataSets[$testName] = [
                 'error' => new BadRequestError($data['parameter'], $errorType),
                 'serialized' => [

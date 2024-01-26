@@ -29,9 +29,9 @@ class DeserializerTest extends TestCase
      *
      * @param array<mixed> $serialized
      */
-    public function testDeserializeSuccess(ParameterInterface $field, array $serialized): void
+    public function testDeserializeSuccess(ParameterInterface $parameter, array $serialized): void
     {
-        self::assertEquals($this->deserializer->deserialize($serialized), $field);
+        self::assertEquals($this->deserializer->deserialize($serialized), $parameter);
     }
 
     /**
