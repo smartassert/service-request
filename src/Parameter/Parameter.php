@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace SmartAssert\ServiceRequest\Field;
+namespace SmartAssert\ServiceRequest\Parameter;
 
-class Field implements FieldInterface
+class Parameter implements ParameterInterface
 {
     private ?int $errorPosition = null;
     private ?RequirementsInterface $requirements = null;
@@ -34,7 +34,7 @@ class Field implements FieldInterface
         return $this->requirements;
     }
 
-    public function withRequirements(RequirementsInterface $requirements): FieldInterface
+    public function withRequirements(RequirementsInterface $requirements): ParameterInterface
     {
         $new = clone $this;
         $new->requirements = $requirements;
@@ -47,7 +47,7 @@ class Field implements FieldInterface
         return $this->errorPosition;
     }
 
-    public function withErrorPosition(int $position): FieldInterface
+    public function withErrorPosition(int $position): ParameterInterface
     {
         $new = clone $this;
         $new->errorPosition = $position;

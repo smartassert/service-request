@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SmartAssert\ServiceRequest\Field;
+namespace SmartAssert\ServiceRequest\Parameter;
 
 interface SizeInterface
 {

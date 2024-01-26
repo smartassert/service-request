@@ -11,7 +11,7 @@ use SmartAssert\ServiceRequest\Error\ErrorInterface;
 readonly class DuplicateObjectErrorDeserializer implements TypeDeserializerInterface
 {
     public function __construct(
-        private ErrorFieldDeserializer $errorFieldDeserializer,
+        private ErrorParameterDeserializer $errorParameterDeserializer,
     ) {
     }
 
@@ -22,7 +22,7 @@ readonly class DuplicateObjectErrorDeserializer implements TypeDeserializerInter
         }
 
         return new DuplicateObjectError(
-            $this->errorFieldDeserializer->deserialize($class, $data)
+            $this->errorParameterDeserializer->deserialize($class, $data)
         );
     }
 }

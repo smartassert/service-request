@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
-use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer as ParameterDeserializer;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
-use SmartAssert\ServiceRequest\Field\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
-readonly class ErrorFieldDeserializer
+readonly class ErrorParameterDeserializer
 {
     public function __construct(
-        private FieldDeserializer $fieldDeserializer,
+        private ParameterDeserializer $parameterDeserializer,
     ) {
     }
 
@@ -22,41 +22,41 @@ readonly class ErrorFieldDeserializer
      *
      * @throws ErrorDeserializationException
      */
-    public function deserialize(string $class, array $data): FieldInterface
+    public function deserialize(string $class, array $data): ParameterInterface
     {
-        if (!array_key_exists('field', $data)) {
+        if (!array_key_exists('parameter', $data)) {
             throw new ErrorDeserializationException(
                 $class,
-                new DeserializationException('field', $data, DeserializationException::CODE_MISSING)
+                new DeserializationException('parameter', $data, DeserializationException::CODE_MISSING)
             );
         }
 
-        $fieldData = $data['field'];
-        if (!is_array($fieldData)) {
+        $parameterData = $data['parameter'];
+        if (!is_array($parameterData)) {
             throw new ErrorDeserializationException(
                 $class,
                 (new DeserializationException(
-                    'field',
+                    'parameter',
                     $data,
                     DeserializationException::CODE_INVALID
-                ))->withContext(new TypeErrorContext('array', gettype($fieldData)))
+                ))->withContext(new TypeErrorContext('array', gettype($parameterData)))
             );
         }
 
         try {
-            $field = $this->fieldDeserializer->deserialize($fieldData);
-        } catch (\Throwable $fieldDeserializeException) {
+            $parameter = $this->parameterDeserializer->deserialize($parameterData);
+        } catch (\Throwable $parameterDeserializeException) {
             throw new ErrorDeserializationException(
                 $class,
                 new DeserializationException(
-                    'field',
+                    'parameter',
                     $data,
                     DeserializationException::CODE_INVALID,
-                    $fieldDeserializeException,
+                    $parameterDeserializeException,
                 )
             );
         }
 
-        return $field;
+        return $parameter;
     }
 }

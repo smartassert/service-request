@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace SmartAssert\ServiceRequest\Field;
+namespace SmartAssert\ServiceRequest\Parameter;
 
 /**
- * @phpstan-type SerializedField array{
+ * @phpstan-type SerializedParameter array{
  *   name: non-empty-string,
  *   value: scalar|array<scalar>,
  *   requirements?: array{
@@ -17,7 +17,7 @@ namespace SmartAssert\ServiceRequest\Field;
  *   }
  * }
  */
-interface FieldInterface
+interface ParameterInterface
 {
     /**
      * @return non-empty-string
@@ -31,14 +31,14 @@ interface FieldInterface
 
     public function getRequirements(): ?RequirementsInterface;
 
-    public function withRequirements(RequirementsInterface $requirements): FieldInterface;
+    public function withRequirements(RequirementsInterface $requirements): ParameterInterface;
 
     public function getErrorPosition(): ?int;
 
-    public function withErrorPosition(int $position): FieldInterface;
+    public function withErrorPosition(int $position): ParameterInterface;
 
     /**
-     * @return SerializedField
+     * @return SerializedParameter
      */
     public function serialize(): array;
 }

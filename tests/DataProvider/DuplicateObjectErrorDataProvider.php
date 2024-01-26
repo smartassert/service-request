@@ -9,7 +9,7 @@ use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
 
 trait DuplicateObjectErrorDataProvider
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
 
     /**
      * @return array<mixed>
@@ -18,17 +18,17 @@ trait DuplicateObjectErrorDataProvider
     {
         $dataSets = [];
 
-        foreach (self::fieldDataProvider() as $fieldTestName => $data) {
+        foreach (self::parameterDataProvider() as $parameterTestName => $data) {
             \assert(is_array($data));
-            \assert(array_key_exists('field', $data));
+            \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
-            $testName = 'duplicate object error with field: ' . $fieldTestName;
+            $testName = 'duplicate object error with parameter: ' . $parameterTestName;
             $dataSets[$testName] = [
-                'error' => new DuplicateObjectError($data['field']),
+                'error' => new DuplicateObjectError($data['parameter']),
                 'serialized' => [
                     'class' => DuplicateObjectErrorInterface::ERROR_CLASS,
-                    'field' => $data['serialized'],
+                    'parameter' => $data['serialized'],
                 ],
             ];
         }

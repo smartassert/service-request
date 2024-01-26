@@ -4,52 +4,52 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Tests\DataProvider;
 
-use SmartAssert\ServiceRequest\Field\Field;
-use SmartAssert\ServiceRequest\Field\Requirements;
-use SmartAssert\ServiceRequest\Field\Size;
+use SmartAssert\ServiceRequest\Parameter\Parameter;
+use SmartAssert\ServiceRequest\Parameter\Requirements;
+use SmartAssert\ServiceRequest\Parameter\Size;
 
-trait FieldDataProviderTrait
+trait ParameterDataProviderTrait
 {
     /**
      * @return array<mixed>
      */
-    public static function fieldDataProvider(): array
+    public static function parameterDataProvider(): array
     {
         $name = md5((string) rand());
         $randomInteger = rand();
         $randomString = md5((string) rand());
 
         return [
-            'bool field, no requirements' => [
-                'field' => new Field($name, true),
+            'bool parameter, no requirements' => [
+                'parameter' => new Parameter($name, true),
                 'serialized' => [
                     'name' => $name,
                     'value' => true,
                 ],
             ],
-            'float field, no requirements' => [
-                'field' => new Field($name, M_PI),
+            'float parameter, no requirements' => [
+                'parameter' => new Parameter($name, M_PI),
                 'serialized' => [
                     'name' => $name,
                     'value' => M_PI,
                 ],
             ],
-            'int field, no requirements' => [
-                'field' => new Field($name, $randomInteger),
+            'int parameter, no requirements' => [
+                'parameter' => new Parameter($name, $randomInteger),
                 'serialized' => [
                     'name' => $name,
                     'value' => $randomInteger,
                 ],
             ],
-            'string field, no requirements' => [
-                'field' => new Field($name, $randomString),
+            'string parameter, no requirements' => [
+                'parameter' => new Parameter($name, $randomString),
                 'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
                 ],
             ],
-            'custom field, has requirements, no size' => [
-                'field' => (new Field($name, $randomString))->withRequirements(new Requirements('custom_type')),
+            'custom parameter, has requirements, no size' => [
+                'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements('custom_type')),
                 'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
@@ -58,8 +58,8 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'custom field, has requirements, has size (0), no maximum' => [
-                'field' => (new Field($name, $randomString))->withRequirements(new Requirements(
+            'custom parameter, has requirements, has size (0), no maximum' => [
+                'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements(
                     'custom_type',
                     new Size(0, null)
                 )),
@@ -75,8 +75,8 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'custom field, has requirements, has size (10), no maximum' => [
-                'field' => (new Field($name, $randomString))->withRequirements(new Requirements(
+            'custom parameter, has requirements, has size (10), no maximum' => [
+                'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements(
                     'custom_type',
                     new Size(10, null)
                 )),
@@ -92,8 +92,8 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'custom field, has requirements, has size' => [
-                'field' => (new Field($name, $randomString))->withRequirements(new Requirements(
+            'custom parameter, has requirements, has size' => [
+                'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements(
                     'custom_type',
                     new Size(1, 255)
                 )),
@@ -109,8 +109,8 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'string array field' => [
-                'field' => (new Field($name, ['one', 'two', 'three']))->withErrorPosition(1),
+            'string array parameter' => [
+                'parameter' => (new Parameter($name, ['one', 'two', 'three']))->withErrorPosition(1),
                 'serialized' => [
                     'name' => $name,
                     'value' => ['one', 'two', 'three'],

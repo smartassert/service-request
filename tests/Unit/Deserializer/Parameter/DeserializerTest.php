@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Field;
+namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Parameter;
 
 use PHPUnit\Framework\TestCase;
-use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer;
+use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
-use SmartAssert\ServiceRequest\Field\FieldInterface;
-use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
+use SmartAssert\ServiceRequest\Tests\DataProvider\ParameterDataProviderTrait;
 
 class DeserializerTest extends TestCase
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
 
     private Deserializer $deserializer;
 
@@ -25,13 +25,13 @@ class DeserializerTest extends TestCase
     }
 
     /**
-     * @dataProvider fieldDataProvider
+     * @dataProvider parameterDataProvider
      *
      * @param array<mixed> $serialized
      */
-    public function testDeserializeSuccess(FieldInterface $field, array $serialized): void
+    public function testDeserializeSuccess(ParameterInterface $parameter, array $serialized): void
     {
-        self::assertEquals($this->deserializer->deserialize($serialized), $field);
+        self::assertEquals($this->deserializer->deserialize($serialized), $parameter);
     }
 
     /**

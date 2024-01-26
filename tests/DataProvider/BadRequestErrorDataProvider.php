@@ -9,7 +9,7 @@ use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 
 trait BadRequestErrorDataProvider
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
 
     /**
      * @return array<mixed>
@@ -19,18 +19,18 @@ trait BadRequestErrorDataProvider
         $errorType = md5((string) rand());
         $dataSets = [];
 
-        foreach (self::fieldDataProvider() as $fieldTestName => $data) {
+        foreach (self::parameterDataProvider() as $parameterTestName => $data) {
             \assert(is_array($data));
-            \assert(array_key_exists('field', $data));
+            \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
-            $testName = 'bad request error with field: ' . $fieldTestName;
+            $testName = 'bad request error with parameter: ' . $parameterTestName;
             $dataSets[$testName] = [
-                'error' => new BadRequestError($data['field'], $errorType),
+                'error' => new BadRequestError($data['parameter'], $errorType),
                 'serialized' => [
                     'class' => BadRequestErrorInterface::ERROR_CLASS,
                     'type' => $errorType,
-                    'field' => $data['serialized'],
+                    'parameter' => $data['serialized'],
                 ],
             ];
         }

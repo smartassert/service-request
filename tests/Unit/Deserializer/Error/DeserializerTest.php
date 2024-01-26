@@ -8,10 +8,10 @@ use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Deserializer\Error\BadRequestErrorDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\Deserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\DuplicateObjectErrorDeserializer;
-use SmartAssert\ServiceRequest\Deserializer\Error\ErrorFieldDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Error\ErrorParameterDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
-use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer as ParameterDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
@@ -156,7 +156,7 @@ class DeserializerTest extends TestCase
                     ))->withContext(new TypeErrorContext('string', 'integer'))
                 ),
             ],
-            'bad request error field missing' => [
+            'bad request error parameter missing' => [
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'bad_request',
@@ -165,7 +165,7 @@ class DeserializerTest extends TestCase
                 'expected' => new ErrorDeserializationException(
                     'bad_request',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'bad_request',
                             'type' => 'too_large',
@@ -174,48 +174,48 @@ class DeserializerTest extends TestCase
                     ),
                 ),
             ],
-            'bad request error field not an array' => [
+            'bad request error parameter not an array' => [
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'bad_request',
                     'type' => 'too_large',
-                    'field' => 123,
+                    'parameter' => 123,
                 ],
                 'expected' => new ErrorDeserializationException(
                     'bad_request',
                     (new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'bad_request',
                             'type' => 'too_large',
-                            'field' => 123,
+                            'parameter' => 123,
                         ],
                         DeserializationException::CODE_INVALID
                     ))->withContext(new TypeErrorContext('array', 'integer'))
                 ),
             ],
-            'bad request error field invalid' => [
+            'bad request error parameter invalid' => [
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'bad_request',
                     'type' => 'too_large',
-                    'field' => [],
+                    'parameter' => [],
                 ],
                 'expected' => new ErrorDeserializationException(
                     'bad_request',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'bad_request',
                             'type' => 'too_large',
-                            'field' => [],
+                            'parameter' => [],
                         ],
                         DeserializationException::CODE_INVALID,
                         new DeserializationException('name', [], DeserializationException::CODE_MISSING)
                     ),
                 ),
             ],
-            'duplicate object error field missing' => [
+            'duplicate object error parameter missing' => [
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'duplicate',
@@ -223,7 +223,7 @@ class DeserializerTest extends TestCase
                 'expected' => new ErrorDeserializationException(
                     'duplicate',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'duplicate',
                         ],
@@ -231,37 +231,37 @@ class DeserializerTest extends TestCase
                     ),
                 ),
             ],
-            'duplicate error field not an array' => [
+            'duplicate error parameter not an array' => [
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'duplicate',
-                    'field' => 123,
+                    'parameter' => 123,
                 ],
                 'expected' => new ErrorDeserializationException(
                     'duplicate',
                     (new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'duplicate',
-                            'field' => 123,
+                            'parameter' => 123,
                         ],
                         DeserializationException::CODE_INVALID
                     ))->withContext(new TypeErrorContext('array', 'integer'))
                 ),
             ],
-            'duplicate object error field invalid' => [
+            'duplicate object error parameter invalid' => [
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'duplicate',
-                    'field' => [],
+                    'parameter' => [],
                 ],
                 'expected' => new ErrorDeserializationException(
                     'duplicate',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'duplicate',
-                            'field' => [],
+                            'parameter' => [],
                         ],
                         DeserializationException::CODE_INVALID,
                         new DeserializationException('name', [], DeserializationException::CODE_MISSING)
@@ -574,11 +574,11 @@ class DeserializerTest extends TestCase
 
     public static function createDeserializer(): Deserializer
     {
-        $errorFieldDeserializer = new ErrorFieldDeserializer(new FieldDeserializer());
+        $errorParameterDeserializer = new ErrorParameterDeserializer(new ParameterDeserializer());
 
         return new Deserializer([
-            new BadRequestErrorDeserializer($errorFieldDeserializer),
-            new DuplicateObjectErrorDeserializer($errorFieldDeserializer),
+            new BadRequestErrorDeserializer($errorParameterDeserializer),
+            new DuplicateObjectErrorDeserializer($errorParameterDeserializer),
             new ModifyReadOnlyEntityDeserializer(),
             new StorageErrorDeserializer(),
         ]);

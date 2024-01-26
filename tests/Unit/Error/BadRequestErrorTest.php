@@ -7,8 +7,8 @@ namespace SmartAssert\ServiceRequest\Tests\Unit\Error;
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
-use SmartAssert\ServiceRequest\Error\HasFieldInterface;
-use SmartAssert\ServiceRequest\Field\Field;
+use SmartAssert\ServiceRequest\Error\HasParameterInterface;
+use SmartAssert\ServiceRequest\Parameter\Parameter;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 
 class BadRequestErrorTest extends TestCase
@@ -25,11 +25,11 @@ class BadRequestErrorTest extends TestCase
         self::assertSame($serialized, $error->serialize());
     }
 
-    public function testHasField(): void
+    public function testHasParameter(): void
     {
         self::assertInstanceOf(
-            HasFieldInterface::class,
-            new BadRequestError(new Field('name', 'value'), 'error type')
+            HasParameterInterface::class,
+            new BadRequestError(new Parameter('name', 'value'), 'error type')
         );
     }
 }
