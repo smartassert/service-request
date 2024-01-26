@@ -31,32 +31,32 @@ readonly class ErrorParameterDeserializer
             );
         }
 
-        $fieldData = $data['parameter'];
-        if (!is_array($fieldData)) {
+        $parameterData = $data['parameter'];
+        if (!is_array($parameterData)) {
             throw new ErrorDeserializationException(
                 $class,
                 (new DeserializationException(
                     'parameter',
                     $data,
                     DeserializationException::CODE_INVALID
-                ))->withContext(new TypeErrorContext('array', gettype($fieldData)))
+                ))->withContext(new TypeErrorContext('array', gettype($parameterData)))
             );
         }
 
         try {
-            $field = $this->parameterDeserializer->deserialize($fieldData);
-        } catch (\Throwable $fieldDeserializeException) {
+            $parameter = $this->parameterDeserializer->deserialize($parameterData);
+        } catch (\Throwable $parameterDeserializeException) {
             throw new ErrorDeserializationException(
                 $class,
                 new DeserializationException(
                     'parameter',
                     $data,
                     DeserializationException::CODE_INVALID,
-                    $fieldDeserializeException,
+                    $parameterDeserializeException,
                 )
             );
         }
 
-        return $field;
+        return $parameter;
     }
 }

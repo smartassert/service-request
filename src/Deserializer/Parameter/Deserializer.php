@@ -22,19 +22,19 @@ class Deserializer
      */
     public function deserialize(array $data): ParameterInterface
     {
-        $field = new Parameter($this->findName($data), $this->findValue($data));
+        $parameter = new Parameter($this->findName($data), $this->findValue($data));
 
         $errorPosition = $data['position'] ?? null;
         if (is_int($errorPosition)) {
-            $field = $field->withErrorPosition($errorPosition);
+            $parameter = $parameter->withErrorPosition($errorPosition);
         }
 
         $requirements = $this->createRequirements($data);
         if ($requirements instanceof RequirementsInterface) {
-            $field = $field->withRequirements($requirements);
+            $parameter = $parameter->withRequirements($requirements);
         }
 
-        return $field;
+        return $parameter;
     }
 
     /**
