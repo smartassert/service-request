@@ -6,11 +6,11 @@ namespace SmartAssert\ServiceRequest\Tests\Unit\Parameter;
 
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
-use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
+use SmartAssert\ServiceRequest\Tests\DataProvider\ParameterDataProviderTrait;
 
 class ParameterTest extends TestCase
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
 
     /**
      * @dataProvider parameterDataProvider

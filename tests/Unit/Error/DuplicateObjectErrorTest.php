@@ -10,11 +10,11 @@ use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
 use SmartAssert\ServiceRequest\Error\HasParameterInterface;
 use SmartAssert\ServiceRequest\Parameter\Parameter;
 use SmartAssert\ServiceRequest\Tests\DataProvider\DuplicateObjectErrorDataProvider;
-use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
+use SmartAssert\ServiceRequest\Tests\DataProvider\ParameterDataProviderTrait;
 
 class DuplicateObjectErrorTest extends TestCase
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
     use DuplicateObjectErrorDataProvider;
 
     /**

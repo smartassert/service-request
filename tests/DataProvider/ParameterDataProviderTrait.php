@@ -8,7 +8,7 @@ use SmartAssert\ServiceRequest\Parameter\Parameter;
 use SmartAssert\ServiceRequest\Parameter\Requirements;
 use SmartAssert\ServiceRequest\Parameter\Size;
 
-trait FieldDataProviderTrait
+trait ParameterDataProviderTrait
 {
     /**
      * @return array<mixed>

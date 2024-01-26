@@ -9,11 +9,11 @@ use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
-use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
+use SmartAssert\ServiceRequest\Tests\DataProvider\ParameterDataProviderTrait;
 
 class DeserializerTest extends TestCase
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
 
     private Deserializer $deserializer;
 

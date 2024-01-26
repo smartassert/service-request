@@ -9,7 +9,7 @@ use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
 
 trait DuplicateObjectErrorDataProvider
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
 
     /**
      * @return array<mixed>

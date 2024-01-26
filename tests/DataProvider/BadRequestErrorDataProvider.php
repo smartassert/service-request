@@ -9,7 +9,7 @@ use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 
 trait BadRequestErrorDataProvider
 {
-    use FieldDataProviderTrait;
+    use ParameterDataProviderTrait;
 
     /**
      * @return array<mixed>
