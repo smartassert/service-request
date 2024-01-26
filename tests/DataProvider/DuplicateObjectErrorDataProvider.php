@@ -20,15 +20,15 @@ trait DuplicateObjectErrorDataProvider
 
         foreach (self::fieldDataProvider() as $fieldTestName => $data) {
             \assert(is_array($data));
-            \assert(array_key_exists('field', $data));
+            \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
             $testName = 'duplicate object error with field: ' . $fieldTestName;
             $dataSets[$testName] = [
-                'error' => new DuplicateObjectError($data['field']),
+                'error' => new DuplicateObjectError($data['parameter']),
                 'serialized' => [
                     'class' => DuplicateObjectErrorInterface::ERROR_CLASS,
-                    'field' => $data['serialized'],
+                    'parameter' => $data['serialized'],
                 ],
             ];
         }

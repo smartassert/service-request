@@ -24,19 +24,19 @@ readonly class ErrorParameterDeserializer
      */
     public function deserialize(string $class, array $data): ParameterInterface
     {
-        if (!array_key_exists('field', $data)) {
+        if (!array_key_exists('parameter', $data)) {
             throw new ErrorDeserializationException(
                 $class,
-                new DeserializationException('field', $data, DeserializationException::CODE_MISSING)
+                new DeserializationException('parameter', $data, DeserializationException::CODE_MISSING)
             );
         }
 
-        $fieldData = $data['field'];
+        $fieldData = $data['parameter'];
         if (!is_array($fieldData)) {
             throw new ErrorDeserializationException(
                 $class,
                 (new DeserializationException(
-                    'field',
+                    'parameter',
                     $data,
                     DeserializationException::CODE_INVALID
                 ))->withContext(new TypeErrorContext('array', gettype($fieldData)))
@@ -49,7 +49,7 @@ readonly class ErrorParameterDeserializer
             throw new ErrorDeserializationException(
                 $class,
                 new DeserializationException(
-                    'field',
+                    'parameter',
                     $data,
                     DeserializationException::CODE_INVALID,
                     $fieldDeserializeException,

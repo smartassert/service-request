@@ -9,7 +9,11 @@ use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 /**
  * @phpstan-import-type SerializedParameter from ParameterInterface
  *
- * @phpstan-type SerializedBadRequest array{class: 'bad_request', type: non-empty-string, field: SerializedParameter}
+ * @phpstan-type SerializedBadRequest array{
+ *   class: 'bad_request',
+ *   type: non-empty-string,
+ *   parameter: SerializedParameter
+ * }
  */
 interface BadRequestErrorInterface extends ErrorInterface
 {

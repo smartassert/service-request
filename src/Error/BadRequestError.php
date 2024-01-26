@@ -34,7 +34,7 @@ readonly class BadRequestError extends Error implements BadRequestErrorInterface
         return [
             'class' => BadRequestErrorInterface::ERROR_CLASS,
             'type' => $this->errorType,
-            'field' => $this->parameter->serialize(),
+            'parameter' => $this->parameter->serialize(),
         ];
     }
 }

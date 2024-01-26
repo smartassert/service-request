@@ -165,7 +165,7 @@ class DeserializerTest extends TestCase
                 'expected' => new ErrorDeserializationException(
                     'bad_request',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'bad_request',
                             'type' => 'too_large',
@@ -179,16 +179,16 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'bad_request',
                     'type' => 'too_large',
-                    'field' => 123,
+                    'parameter' => 123,
                 ],
                 'expected' => new ErrorDeserializationException(
                     'bad_request',
                     (new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'bad_request',
                             'type' => 'too_large',
-                            'field' => 123,
+                            'parameter' => 123,
                         ],
                         DeserializationException::CODE_INVALID
                     ))->withContext(new TypeErrorContext('array', 'integer'))
@@ -199,16 +199,16 @@ class DeserializerTest extends TestCase
                 'data' => [
                     'class' => 'bad_request',
                     'type' => 'too_large',
-                    'field' => [],
+                    'parameter' => [],
                 ],
                 'expected' => new ErrorDeserializationException(
                     'bad_request',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'bad_request',
                             'type' => 'too_large',
-                            'field' => [],
+                            'parameter' => [],
                         ],
                         DeserializationException::CODE_INVALID,
                         new DeserializationException('name', [], DeserializationException::CODE_MISSING)
@@ -223,7 +223,7 @@ class DeserializerTest extends TestCase
                 'expected' => new ErrorDeserializationException(
                     'duplicate',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'duplicate',
                         ],
@@ -235,15 +235,15 @@ class DeserializerTest extends TestCase
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'duplicate',
-                    'field' => 123,
+                    'parameter' => 123,
                 ],
                 'expected' => new ErrorDeserializationException(
                     'duplicate',
                     (new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'duplicate',
-                            'field' => 123,
+                            'parameter' => 123,
                         ],
                         DeserializationException::CODE_INVALID
                     ))->withContext(new TypeErrorContext('array', 'integer'))
@@ -253,15 +253,15 @@ class DeserializerTest extends TestCase
                 'deserializer' => self::createDeserializer(),
                 'data' => [
                     'class' => 'duplicate',
-                    'field' => [],
+                    'parameter' => [],
                 ],
                 'expected' => new ErrorDeserializationException(
                     'duplicate',
                     new DeserializationException(
-                        'field',
+                        'parameter',
                         [
                             'class' => 'duplicate',
-                            'field' => [],
+                            'parameter' => [],
                         ],
                         DeserializationException::CODE_INVALID,
                         new DeserializationException('name', [], DeserializationException::CODE_MISSING)

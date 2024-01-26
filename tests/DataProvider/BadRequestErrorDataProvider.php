@@ -21,16 +21,16 @@ trait BadRequestErrorDataProvider
 
         foreach (self::fieldDataProvider() as $fieldTestName => $data) {
             \assert(is_array($data));
-            \assert(array_key_exists('field', $data));
+            \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
             $testName = 'bad request error with field: ' . $fieldTestName;
             $dataSets[$testName] = [
-                'error' => new BadRequestError($data['field'], $errorType),
+                'error' => new BadRequestError($data['parameter'], $errorType),
                 'serialized' => [
                     'class' => BadRequestErrorInterface::ERROR_CLASS,
                     'type' => $errorType,
-                    'field' => $data['serialized'],
+                    'parameter' => $data['serialized'],
                 ],
             ];
         }

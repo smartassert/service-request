@@ -29,7 +29,7 @@ readonly class DuplicateObjectError extends Error implements DuplicateObjectErro
     {
         return [
             'class' => DuplicateObjectErrorInterface::ERROR_CLASS,
-            'field' => $this->parameter->serialize(),
+            'parameter' => $this->parameter->serialize(),
         ];
     }
 }
