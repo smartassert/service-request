@@ -12,14 +12,14 @@ use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 readonly class DuplicateObjectError extends Error implements DuplicateObjectErrorInterface, HasParameterInterface
 {
     public function __construct(
-        private ParameterInterface $field,
+        private ParameterInterface $parameter,
     ) {
         parent::__construct(DuplicateObjectErrorInterface::ERROR_CLASS);
     }
 
     public function getParameter(): ParameterInterface
     {
-        return $this->field;
+        return $this->parameter;
     }
 
     /**
@@ -29,7 +29,7 @@ readonly class DuplicateObjectError extends Error implements DuplicateObjectErro
     {
         return [
             'class' => DuplicateObjectErrorInterface::ERROR_CLASS,
-            'field' => $this->field->serialize(),
+            'field' => $this->parameter->serialize(),
         ];
     }
 }

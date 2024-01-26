@@ -15,7 +15,7 @@ readonly class BadRequestError extends Error implements BadRequestErrorInterface
      * @param non-empty-string $errorType
      */
     public function __construct(
-        private ParameterInterface $field,
+        private ParameterInterface $parameter,
         private string $errorType,
     ) {
         parent::__construct(BadRequestErrorInterface::ERROR_CLASS, $errorType);
@@ -23,7 +23,7 @@ readonly class BadRequestError extends Error implements BadRequestErrorInterface
 
     public function getParameter(): ParameterInterface
     {
-        return $this->field;
+        return $this->parameter;
     }
 
     /**
@@ -34,7 +34,7 @@ readonly class BadRequestError extends Error implements BadRequestErrorInterface
         return [
             'class' => BadRequestErrorInterface::ERROR_CLASS,
             'type' => $this->errorType,
-            'field' => $this->field->serialize(),
+            'field' => $this->parameter->serialize(),
         ];
     }
 }
