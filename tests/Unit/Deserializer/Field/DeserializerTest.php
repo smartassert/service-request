@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Field;
 
 use PHPUnit\Framework\TestCase;
-use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer;
+use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Parameter\ParameterInterface;

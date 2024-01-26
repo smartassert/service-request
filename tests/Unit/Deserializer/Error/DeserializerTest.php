@@ -11,7 +11,7 @@ use SmartAssert\ServiceRequest\Deserializer\Error\DuplicateObjectErrorDeserializ
 use SmartAssert\ServiceRequest\Deserializer\Error\ErrorFieldDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
-use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer as FieldDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SmartAssert\ServiceRequest\Deserializer\Field;
+namespace SmartAssert\ServiceRequest\Deserializer\Parameter;
 
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
