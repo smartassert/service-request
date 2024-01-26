@@ -8,5 +8,5 @@ use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
 interface HasParameterInterface extends ErrorInterface
 {
-    public function getField(): ParameterInterface;
+    public function getParameter(): ParameterInterface;
 }

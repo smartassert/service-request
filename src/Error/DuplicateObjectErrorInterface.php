@@ -15,7 +15,7 @@ interface DuplicateObjectErrorInterface extends ErrorInterface
 {
     public const ERROR_CLASS = 'duplicate';
 
-    public function getField(): ParameterInterface;
+    public function getParameter(): ParameterInterface;
 
     /**
      * @return SerializedDuplicateObjectError

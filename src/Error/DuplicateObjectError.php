@@ -17,7 +17,7 @@ readonly class DuplicateObjectError extends Error implements DuplicateObjectErro
         parent::__construct(DuplicateObjectErrorInterface::ERROR_CLASS);
     }
 
-    public function getField(): ParameterInterface
+    public function getParameter(): ParameterInterface
     {
         return $this->field;
     }

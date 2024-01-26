@@ -21,7 +21,7 @@ readonly class BadRequestError extends Error implements BadRequestErrorInterface
         parent::__construct(BadRequestErrorInterface::ERROR_CLASS, $errorType);
     }
 
-    public function getField(): ParameterInterface
+    public function getParameter(): ParameterInterface
     {
         return $this->field;
     }

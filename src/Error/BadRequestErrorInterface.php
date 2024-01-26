@@ -15,7 +15,7 @@ interface BadRequestErrorInterface extends ErrorInterface
 {
     public const ERROR_CLASS = 'bad_request';
 
-    public function getField(): ParameterInterface;
+    public function getParameter(): ParameterInterface;
 
     /**
      * @return SerializedBadRequest
