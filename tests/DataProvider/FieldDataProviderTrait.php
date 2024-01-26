@@ -20,35 +20,35 @@ trait FieldDataProviderTrait
         $randomString = md5((string) rand());
 
         return [
-            'bool field, no requirements' => [
+            'bool parameter, no requirements' => [
                 'parameter' => new Parameter($name, true),
                 'serialized' => [
                     'name' => $name,
                     'value' => true,
                 ],
             ],
-            'float field, no requirements' => [
+            'float parameter, no requirements' => [
                 'parameter' => new Parameter($name, M_PI),
                 'serialized' => [
                     'name' => $name,
                     'value' => M_PI,
                 ],
             ],
-            'int field, no requirements' => [
+            'int parameter, no requirements' => [
                 'parameter' => new Parameter($name, $randomInteger),
                 'serialized' => [
                     'name' => $name,
                     'value' => $randomInteger,
                 ],
             ],
-            'string field, no requirements' => [
+            'string parameter, no requirements' => [
                 'parameter' => new Parameter($name, $randomString),
                 'serialized' => [
                     'name' => $name,
                     'value' => $randomString,
                 ],
             ],
-            'custom field, has requirements, no size' => [
+            'custom parameter, has requirements, no size' => [
                 'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements('custom_type')),
                 'serialized' => [
                     'name' => $name,
@@ -58,7 +58,7 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'custom field, has requirements, has size (0), no maximum' => [
+            'custom parameter, has requirements, has size (0), no maximum' => [
                 'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements(
                     'custom_type',
                     new Size(0, null)
@@ -75,7 +75,7 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'custom field, has requirements, has size (10), no maximum' => [
+            'custom parameter, has requirements, has size (10), no maximum' => [
                 'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements(
                     'custom_type',
                     new Size(10, null)
@@ -92,7 +92,7 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'custom field, has requirements, has size' => [
+            'custom parameter, has requirements, has size' => [
                 'parameter' => (new Parameter($name, $randomString))->withRequirements(new Requirements(
                     'custom_type',
                     new Size(1, 255)
@@ -109,7 +109,7 @@ trait FieldDataProviderTrait
                     ],
                 ],
             ],
-            'string array field' => [
+            'string array parameter' => [
                 'parameter' => (new Parameter($name, ['one', 'two', 'three']))->withErrorPosition(1),
                 'serialized' => [
                     'name' => $name,
