@@ -14,7 +14,7 @@ use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 readonly class BadRequestErrorDeserializer implements TypeDeserializerInterface
 {
     public function __construct(
-        private ErrorFieldDeserializer $errorFieldDeserializer,
+        private ErrorParameterDeserializer $errorFieldDeserializer,
     ) {
     }
 

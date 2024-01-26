@@ -10,7 +10,7 @@ use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
 use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
-readonly class ErrorFieldDeserializer
+readonly class ErrorParameterDeserializer
 {
     public function __construct(
         private FieldDeserializer $fieldDeserializer,
