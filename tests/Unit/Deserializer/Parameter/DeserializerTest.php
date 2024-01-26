@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Field;
+namespace SmartAssert\ServiceRequest\Tests\Unit\Deserializer\Parameter;
 
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer;
