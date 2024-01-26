@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Tests\DataProvider;
 
-use SmartAssert\ServiceRequest\Field\Field;
-use SmartAssert\ServiceRequest\Field\Requirements;
-use SmartAssert\ServiceRequest\Field\Size;
+use SmartAssert\ServiceRequest\Parameter\Field;
+use SmartAssert\ServiceRequest\Parameter\Requirements;
+use SmartAssert\ServiceRequest\Parameter\Size;
 
 trait FieldDataProviderTrait
 {

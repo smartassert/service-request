@@ -6,12 +6,12 @@ namespace SmartAssert\ServiceRequest\Deserializer\Field;
 
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
-use SmartAssert\ServiceRequest\Field\Field;
-use SmartAssert\ServiceRequest\Field\FieldInterface;
-use SmartAssert\ServiceRequest\Field\Requirements;
-use SmartAssert\ServiceRequest\Field\RequirementsInterface;
-use SmartAssert\ServiceRequest\Field\Size;
-use SmartAssert\ServiceRequest\Field\SizeInterface;
+use SmartAssert\ServiceRequest\Parameter\Field;
+use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\Requirements;
+use SmartAssert\ServiceRequest\Parameter\RequirementsInterface;
+use SmartAssert\ServiceRequest\Parameter\Size;
+use SmartAssert\ServiceRequest\Parameter\SizeInterface;
 
 class Deserializer
 {

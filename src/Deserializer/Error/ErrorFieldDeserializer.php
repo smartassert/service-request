@@ -8,7 +8,7 @@ use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeseriali
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
-use SmartAssert\ServiceRequest\Field\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\FieldInterface;
 
 readonly class ErrorFieldDeserializer
 {

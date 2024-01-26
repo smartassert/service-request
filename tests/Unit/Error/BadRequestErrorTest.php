@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 use SmartAssert\ServiceRequest\Error\HasFieldInterface;
-use SmartAssert\ServiceRequest\Field\Field;
+use SmartAssert\ServiceRequest\Parameter\Field;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 
 class BadRequestErrorTest extends TestCase
