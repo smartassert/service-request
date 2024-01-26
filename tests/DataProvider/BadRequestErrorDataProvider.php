@@ -24,7 +24,7 @@ trait BadRequestErrorDataProvider
             \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
-            $testName = 'bad request error with field: ' . $parameterTestName;
+            $testName = 'bad request error with parameter: ' . $parameterTestName;
             $dataSets[$testName] = [
                 'error' => new BadRequestError($data['parameter'], $errorType),
                 'serialized' => [

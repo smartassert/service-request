@@ -27,7 +27,7 @@ class DuplicateObjectErrorTest extends TestCase
         self::assertSame($serialized, $error->serialize());
     }
 
-    public function testHasField(): void
+    public function testHasParameter(): void
     {
         self::assertInstanceOf(
             HasParameterInterface::class,

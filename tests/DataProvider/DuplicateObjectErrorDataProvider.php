@@ -23,7 +23,7 @@ trait DuplicateObjectErrorDataProvider
             \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));
 
-            $testName = 'duplicate object error with field: ' . $parameterTestName;
+            $testName = 'duplicate object error with parameter: ' . $parameterTestName;
             $dataSets[$testName] = [
                 'error' => new DuplicateObjectError($data['parameter']),
                 'serialized' => [
