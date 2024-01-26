@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Parameter;
 
 /**
- * @phpstan-type SerializedField array{
+ * @phpstan-type SerializedParameter array{
  *   name: non-empty-string,
  *   value: scalar|array<scalar>,
  *   requirements?: array{
@@ -38,7 +38,7 @@ interface ParameterInterface
     public function withErrorPosition(int $position): ParameterInterface;
 
     /**
-     * @return SerializedField
+     * @return SerializedParameter
      */
     public function serialize(): array;
 }

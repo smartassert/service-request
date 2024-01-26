@@ -7,9 +7,9 @@ namespace SmartAssert\ServiceRequest\Error;
 use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
 /**
- * @phpstan-import-type SerializedField from ParameterInterface
+ * @phpstan-import-type SerializedParameter from ParameterInterface
  *
- * @phpstan-type SerializedDuplicateObjectError array{class: 'duplicate', field: SerializedField}
+ * @phpstan-type SerializedDuplicateObjectError array{class: 'duplicate', field: SerializedParameter}
  */
 interface DuplicateObjectErrorInterface extends ErrorInterface
 {
