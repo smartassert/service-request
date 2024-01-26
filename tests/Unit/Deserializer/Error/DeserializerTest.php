@@ -11,7 +11,7 @@ use SmartAssert\ServiceRequest\Deserializer\Error\DuplicateObjectErrorDeserializ
 use SmartAssert\ServiceRequest\Deserializer\Error\ErrorParameterDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\ModifyReadOnlyEntityDeserializer;
 use SmartAssert\ServiceRequest\Deserializer\Error\StorageErrorDeserializer;
-use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer as FieldDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer as ParameterDeserializer;
 use SmartAssert\ServiceRequest\Error\ErrorInterface;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
@@ -574,7 +574,7 @@ class DeserializerTest extends TestCase
 
     public static function createDeserializer(): Deserializer
     {
-        $errorFieldDeserializer = new ErrorParameterDeserializer(new FieldDeserializer());
+        $errorFieldDeserializer = new ErrorParameterDeserializer(new ParameterDeserializer());
 
         return new Deserializer([
             new BadRequestErrorDeserializer($errorFieldDeserializer),
