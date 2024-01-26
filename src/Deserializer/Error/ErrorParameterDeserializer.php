@@ -13,7 +13,7 @@ use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 readonly class ErrorParameterDeserializer
 {
     public function __construct(
-        private ParameterDeserializer $fieldDeserializer,
+        private ParameterDeserializer $parameterDeserializer,
     ) {
     }
 
@@ -44,7 +44,7 @@ readonly class ErrorParameterDeserializer
         }
 
         try {
-            $field = $this->fieldDeserializer->deserialize($fieldData);
+            $field = $this->parameterDeserializer->deserialize($fieldData);
         } catch (\Throwable $fieldDeserializeException) {
             throw new ErrorDeserializationException(
                 $class,
