@@ -13,7 +13,7 @@ class ParameterTest extends TestCase
     use FieldDataProviderTrait;
 
     /**
-     * @dataProvider fieldDataProvider
+     * @dataProvider parameterDataProvider
      *
      * @param array<mixed> $serialized
      */

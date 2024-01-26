@@ -25,7 +25,7 @@ class DeserializerTest extends TestCase
     }
 
     /**
-     * @dataProvider fieldDataProvider
+     * @dataProvider parameterDataProvider
      *
      * @param array<mixed> $serialized
      */

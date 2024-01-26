@@ -19,7 +19,7 @@ trait BadRequestErrorDataProvider
         $errorType = md5((string) rand());
         $dataSets = [];
 
-        foreach (self::fieldDataProvider() as $fieldTestName => $data) {
+        foreach (self::parameterDataProvider() as $fieldTestName => $data) {
             \assert(is_array($data));
             \assert(array_key_exists('parameter', $data));
             \assert(array_key_exists('serialized', $data));

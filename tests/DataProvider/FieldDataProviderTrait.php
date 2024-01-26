@@ -13,7 +13,7 @@ trait FieldDataProviderTrait
     /**
      * @return array<mixed>
      */
-    public static function fieldDataProvider(): array
+    public static function parameterDataProvider(): array
     {
         $name = md5((string) rand());
         $randomInteger = rand();
