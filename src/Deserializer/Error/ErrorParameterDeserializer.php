@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Deserializer\Error;
 
-use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer as FieldDeserializer;
+use SmartAssert\ServiceRequest\Deserializer\Parameter\Deserializer as ParameterDeserializer;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
@@ -13,7 +13,7 @@ use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 readonly class ErrorParameterDeserializer
 {
     public function __construct(
-        private FieldDeserializer $fieldDeserializer,
+        private ParameterDeserializer $fieldDeserializer,
     ) {
     }
 
