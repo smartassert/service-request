@@ -7,7 +7,7 @@ namespace SmartAssert\ServiceRequest\Tests\Unit\Error;
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Error\DuplicateObjectError;
 use SmartAssert\ServiceRequest\Error\DuplicateObjectErrorInterface;
-use SmartAssert\ServiceRequest\Error\HasFieldInterface;
+use SmartAssert\ServiceRequest\Error\HasParameterInterface;
 use SmartAssert\ServiceRequest\Parameter\Parameter;
 use SmartAssert\ServiceRequest\Tests\DataProvider\DuplicateObjectErrorDataProvider;
 use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
@@ -30,7 +30,7 @@ class DuplicateObjectErrorTest extends TestCase
     public function testHasField(): void
     {
         self::assertInstanceOf(
-            HasFieldInterface::class,
+            HasParameterInterface::class,
             new DuplicateObjectError(new Parameter('name', 'value'))
         );
     }

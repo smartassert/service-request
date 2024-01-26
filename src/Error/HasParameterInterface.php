@@ -6,7 +6,7 @@ namespace SmartAssert\ServiceRequest\Error;
 
 use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
-interface HasFieldInterface extends ErrorInterface
+interface HasParameterInterface extends ErrorInterface
 {
     public function getField(): ParameterInterface;
 }

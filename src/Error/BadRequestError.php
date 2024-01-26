@@ -9,7 +9,7 @@ use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 /**
  * @phpstan-import-type SerializedBadRequest from BadRequestErrorInterface
  */
-readonly class BadRequestError extends Error implements BadRequestErrorInterface, HasFieldInterface
+readonly class BadRequestError extends Error implements BadRequestErrorInterface, HasParameterInterface
 {
     /**
      * @param non-empty-string $errorType

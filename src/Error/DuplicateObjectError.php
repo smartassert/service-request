@@ -9,7 +9,7 @@ use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 /**
  * @phpstan-import-type SerializedDuplicateObjectError from DuplicateObjectErrorInterface
  */
-readonly class DuplicateObjectError extends Error implements DuplicateObjectErrorInterface, HasFieldInterface
+readonly class DuplicateObjectError extends Error implements DuplicateObjectErrorInterface, HasParameterInterface
 {
     public function __construct(
         private ParameterInterface $field,
