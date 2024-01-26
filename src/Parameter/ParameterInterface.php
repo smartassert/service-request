@@ -17,7 +17,7 @@ namespace SmartAssert\ServiceRequest\Parameter;
  *   }
  * }
  */
-interface FieldInterface
+interface ParameterInterface
 {
     /**
      * @return non-empty-string
@@ -31,11 +31,11 @@ interface FieldInterface
 
     public function getRequirements(): ?RequirementsInterface;
 
-    public function withRequirements(RequirementsInterface $requirements): FieldInterface;
+    public function withRequirements(RequirementsInterface $requirements): ParameterInterface;
 
     public function getErrorPosition(): ?int;
 
-    public function withErrorPosition(int $position): FieldInterface;
+    public function withErrorPosition(int $position): ParameterInterface;
 
     /**
      * @return SerializedField

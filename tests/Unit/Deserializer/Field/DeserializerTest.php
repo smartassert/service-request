@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer;
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
-use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
 
 class DeserializerTest extends TestCase
@@ -29,7 +29,7 @@ class DeserializerTest extends TestCase
      *
      * @param array<mixed> $serialized
      */
-    public function testDeserializeSuccess(FieldInterface $field, array $serialized): void
+    public function testDeserializeSuccess(ParameterInterface $field, array $serialized): void
     {
         self::assertEquals($this->deserializer->deserialize($serialized), $field);
     }

@@ -8,7 +8,7 @@ use SmartAssert\ServiceRequest\Deserializer\Field\Deserializer as FieldDeseriali
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\ErrorDeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
-use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
 readonly class ErrorFieldDeserializer
 {
@@ -22,7 +22,7 @@ readonly class ErrorFieldDeserializer
      *
      * @throws ErrorDeserializationException
      */
-    public function deserialize(string $class, array $data): FieldInterface
+    public function deserialize(string $class, array $data): ParameterInterface
     {
         if (!array_key_exists('field', $data)) {
             throw new ErrorDeserializationException(

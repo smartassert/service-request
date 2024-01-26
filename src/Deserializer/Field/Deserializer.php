@@ -6,8 +6,8 @@ namespace SmartAssert\ServiceRequest\Deserializer\Field;
 
 use SmartAssert\ServiceRequest\Exception\DeserializationException;
 use SmartAssert\ServiceRequest\Exception\TypeErrorContext;
-use SmartAssert\ServiceRequest\Parameter\Field;
-use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\Parameter;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 use SmartAssert\ServiceRequest\Parameter\Requirements;
 use SmartAssert\ServiceRequest\Parameter\RequirementsInterface;
 use SmartAssert\ServiceRequest\Parameter\Size;
@@ -20,9 +20,9 @@ class Deserializer
      *
      * @throws DeserializationException
      */
-    public function deserialize(array $data): FieldInterface
+    public function deserialize(array $data): ParameterInterface
     {
-        $field = new Field($this->findName($data), $this->findValue($data));
+        $field = new Parameter($this->findName($data), $this->findValue($data));
 
         $errorPosition = $data['position'] ?? null;
         if (is_int($errorPosition)) {

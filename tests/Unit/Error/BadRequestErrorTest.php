@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceRequest\Error\BadRequestError;
 use SmartAssert\ServiceRequest\Error\BadRequestErrorInterface;
 use SmartAssert\ServiceRequest\Error\HasFieldInterface;
-use SmartAssert\ServiceRequest\Parameter\Field;
+use SmartAssert\ServiceRequest\Parameter\Parameter;
 use SmartAssert\ServiceRequest\Tests\DataProvider\BadRequestErrorDataProvider;
 
 class BadRequestErrorTest extends TestCase
@@ -29,7 +29,7 @@ class BadRequestErrorTest extends TestCase
     {
         self::assertInstanceOf(
             HasFieldInterface::class,
-            new BadRequestError(new Field('name', 'value'), 'error type')
+            new BadRequestError(new Parameter('name', 'value'), 'error type')
         );
     }
 }

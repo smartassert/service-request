@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Error;
 
-use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
 /**
  * @phpstan-import-type SerializedDuplicateObjectError from DuplicateObjectErrorInterface
@@ -12,12 +12,12 @@ use SmartAssert\ServiceRequest\Parameter\FieldInterface;
 readonly class DuplicateObjectError extends Error implements DuplicateObjectErrorInterface, HasFieldInterface
 {
     public function __construct(
-        private FieldInterface $field,
+        private ParameterInterface $field,
     ) {
         parent::__construct(DuplicateObjectErrorInterface::ERROR_CLASS);
     }
 
-    public function getField(): FieldInterface
+    public function getField(): ParameterInterface
     {
         return $this->field;
     }

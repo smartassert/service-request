@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Error;
 
-use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
 interface HasFieldInterface extends ErrorInterface
 {
-    public function getField(): FieldInterface;
+    public function getField(): ParameterInterface;
 }

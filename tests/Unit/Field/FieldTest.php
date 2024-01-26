@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\ServiceRequest\Tests\Unit\Field;
 
 use PHPUnit\Framework\TestCase;
-use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 use SmartAssert\ServiceRequest\Tests\DataProvider\FieldDataProviderTrait;
 
 class FieldTest extends TestCase
@@ -17,7 +17,7 @@ class FieldTest extends TestCase
      *
      * @param array<mixed> $serialized
      */
-    public function testSerializeSuccess(FieldInterface $field, array $serialized): void
+    public function testSerializeSuccess(ParameterInterface $field, array $serialized): void
     {
         self::assertSame($serialized, $field->serialize());
     }

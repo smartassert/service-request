@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\ServiceRequest\Error;
 
-use SmartAssert\ServiceRequest\Parameter\FieldInterface;
+use SmartAssert\ServiceRequest\Parameter\ParameterInterface;
 
 /**
  * @phpstan-import-type SerializedBadRequest from BadRequestErrorInterface
@@ -15,13 +15,13 @@ readonly class BadRequestError extends Error implements BadRequestErrorInterface
      * @param non-empty-string $errorType
      */
     public function __construct(
-        private FieldInterface $field,
+        private ParameterInterface $field,
         private string $errorType,
     ) {
         parent::__construct(BadRequestErrorInterface::ERROR_CLASS, $errorType);
     }
 
-    public function getField(): FieldInterface
+    public function getField(): ParameterInterface
     {
         return $this->field;
     }
