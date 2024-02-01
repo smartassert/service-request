@@ -22,7 +22,7 @@ interface StorageExceptionInterface extends \Throwable
     public function getLocation(): ?string;
 
     /**
-     * @return array<string, scalar> $context
+     * @return array<string, scalar>
      */
     public function getContext(): array;
 }

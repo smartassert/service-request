@@ -10,7 +10,7 @@ class StorageException extends \Exception implements StorageExceptionInterface
      * @param non-empty-string      $objectType
      * @param ?non-empty-string     $operation
      * @param ?non-empty-string     $location
-     * @param array<string, scalar> $context    $context
+     * @param array<string, scalar> $context
      */
     public function __construct(
         private readonly string $objectType,
